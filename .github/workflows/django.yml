@@ -27,5 +27,4 @@ jobs:
         find . -name "requirements.txt" -exec pip install -r {} \;
     - name: Run Tests
       run: |
-        cd Project
-        python manage.py test
+        find . -name "manage.py" -exec python {} test
