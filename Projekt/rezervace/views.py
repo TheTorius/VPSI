@@ -20,3 +20,9 @@ def register(request):
     else:
         form = RegistrationForm()
     return render(request, 'rezervace/register.html', {'form': form})
+
+def index(request):
+    return render(request, 'rezervace/index.html')
+
+def main(request):
+    return render(request, 'rezervace/index.html')

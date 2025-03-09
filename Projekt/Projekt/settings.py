@@ -122,6 +122,14 @@ STATIC_URL = 'static/'
 LOGIN_REDIRECT_URL = '/home'
 LOGOUT_REDIRECT_URL = '/login/'
 
+# Pokud chceš shromažďovat statické soubory pro produkci, nastav tuto možnost
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Možnost pro vývojové prostředí, pokud používáš více aplikací
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # Toto je volitelná složka pro globální statické soubory
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

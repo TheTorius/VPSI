@@ -21,11 +21,13 @@ from django.contrib.auth import views as auth_views
 from rezervace import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     
     # Přidání URL pro přihlášení a odhlášení
     path('login/', auth_views.LoginView.as_view(template_name='rezervace/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('home/', views.home, name='home'), 
     path('register/', views.register, name='register'),
+    path('index/', views.index, name='index'),
+    path('', views.main, name='main'),
 ]
