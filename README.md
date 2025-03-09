@@ -1,4 +1,6 @@
-# VPSI - Vybrané partie ze softwarového inženýrství
+# VPSI - Vybrané partie ze softwarového inženýrství 
+
+[![Django CI](https://github.com/TheTorius/VPSI/actions/workflows/django.yml/badge.svg)](https://github.com/TheTorius/VPSI/actions/workflows/django.yml)
 
 ## Informace o předmětu
 
@@ -8,8 +10,6 @@
 - __Ročník:__ 3.
 - __Garant předmětu:__ Ing. Svatopluk Štolfa, Ph.D.
 - __Vedoucí cvičení:__ Ing. Jakub Štolfa, Ph.D.
-
----
 
 ## Informace o projektu
 
