@@ -1,0 +1,86 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36" version="26.1.0">
+  <diagram name="Stránka-1" id="G7YvuACkwAtl6_F3-VA2">
+    <mxGraphModel dx="1050" dy="557" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="583" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-5" value="User" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="440" y="50" width="140" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-6" value="&lt;div&gt;+ id&lt;/div&gt;&lt;div&gt;+ name&lt;/div&gt;&lt;div&gt;+ surname&lt;/div&gt;&lt;div&gt;+ username&lt;/div&gt;&lt;div&gt;+ email&lt;/div&gt;&lt;div&gt;+ phone_number&lt;/div&gt;&lt;div&gt;+ password&lt;/div&gt;&lt;div&gt;+&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;role&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="dIyntjs2qQ6zBWLoYFnA-5" vertex="1">
+          <mxGeometry y="26" width="140" height="124" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;startArrow=ERmany;startFill=0;endArrow=none;" parent="1" source="dIyntjs2qQ6zBWLoYFnA-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="200" as="targetPoint" />
+            <mxPoint x="510" y="215" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-9" value="Reservation" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="440" y="225" width="140" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-10" value="&lt;div&gt;+ id&lt;/div&gt;&lt;div&gt;+ start_time&lt;/div&gt;&lt;div&gt;+ end_time&lt;/div&gt;&lt;div&gt;+ status&lt;/div&gt;&lt;div&gt;+ price&lt;/div&gt;&lt;div&gt;+ user_id&lt;/div&gt;&lt;div&gt;+ place_id&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="dIyntjs2qQ6zBWLoYFnA-9" vertex="1">
+          <mxGeometry y="26" width="140" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;endArrow=ERmany;endFill=0;" parent="1" source="dIyntjs2qQ6zBWLoYFnA-11" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="366" as="targetPoint" />
+            <mxPoint x="510" y="416" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="510" y="400" />
+              <mxPoint x="511" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-11" value="Place" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="440" y="401" width="140" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-12" value="+ id&lt;div&gt;+ name&amp;nbsp;&lt;/div&gt;&lt;div&gt;+ opening_time&lt;/div&gt;&lt;div&gt;+ closing_time&lt;/div&gt;&lt;div&gt;+ price_per_hour&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="dIyntjs2qQ6zBWLoYFnA-11" vertex="1">
+          <mxGeometry y="26" width="140" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-15" value="Equipment" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="778" y="255" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-16" value="+ id&lt;div&gt;+ name&lt;/div&gt;&lt;div&gt;+ price&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="dIyntjs2qQ6zBWLoYFnA-15" vertex="1">
+          <mxGeometry y="26" width="140" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-17" value="Payment" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="210" y="140" width="140" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-18" value="+ id&lt;div&gt;+ amount&lt;/div&gt;&lt;div&gt;+ status&lt;/div&gt;&lt;div&gt;+ created_at&lt;/div&gt;&lt;div&gt;+ user_id&lt;/div&gt;&lt;div&gt;+ reservation_id&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="dIyntjs2qQ6zBWLoYFnA-17" vertex="1">
+          <mxGeometry y="26" width="140" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.004;entryY=0.372;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;startFill=0;startArrow=ERmany;" parent="1" source="dIyntjs2qQ6zBWLoYFnA-18" target="dIyntjs2qQ6zBWLoYFnA-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="396" y="180" />
+              <mxPoint x="396" y="121" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.014;entryY=0.439;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;startArrow=ERmany;startFill=0;" parent="1" target="dIyntjs2qQ6zBWLoYFnA-10" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="350" y="240" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="350" y="240" />
+              <mxPoint x="395" y="240" />
+              <mxPoint x="395" y="301" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-25" value="ReservationEquipment" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="607" y="250" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-26" value="+ id&lt;div&gt;+ quantity&lt;br&gt;&lt;div&gt;+ reservation_id&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ equipment_id&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="dIyntjs2qQ6zBWLoYFnA-25" vertex="1">
+          <mxGeometry y="26" width="140" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=none;" parent="1" source="dIyntjs2qQ6zBWLoYFnA-26" target="dIyntjs2qQ6zBWLoYFnA-16" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dIyntjs2qQ6zBWLoYFnA-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;startFill=0;startArrow=ERmany;" parent="1" source="dIyntjs2qQ6zBWLoYFnA-26" target="dIyntjs2qQ6zBWLoYFnA-10" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
