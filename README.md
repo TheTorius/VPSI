@@ -16,16 +16,19 @@
 - __Zadání:__ Vytvořte projekt za použití moderních technik softwarového inženýrství. Využijte praktických znalostí z předmětu SWI (Úvod do softwarového inženýrství) a VPSI (Vybrané partie ze softwarového inženýrství) pro vytvoření projektu v rámci vytvořeného týmu o velikosti 6 lidí. Pokuste se pracovat v týmu a vytvořte projekt, které vám určí zákazník. Zadání zákazníka [zde](./VPSI-Zadani.pdf).
 - __Název vývojářského týmu:__ Poslední řada
 - __Složení týmu a role:__
--   -   _Anna Gocieková_ - Product Owner
--   -   _Jiří Fousek_ - Scrum Master
--   -   _Lukáš Horák_ - Fullstack Developer
--   -   _Jakub Krčmář_ - Fullstack Developer
--   -   _Jakub Śmieja_ - Fullstack Developer
--   -   _Jiří Krokviak_ - Fullstack Developer
--   __Zákazník:__ Bumbrlíci
--   __Název projektu:__ Bumbrlíci s.r.o.
--   __Logo projektu:__ <img src="./images/logo.webp" style="text-align: center" width="35%">
--   __Použité technologie:__ Django (Python), SQLite, Tailwind, Git, HTML5, Bootstrap
+    -   _Anna Gocieková_ - Product Owner
+    -   _Jiří Fousek_ - Scrum Master
+    -   _Lukáš Horák_ - Fullstack Developer
+    -   _Jakub Krčmář_ - Fullstack Developer
+    -   _Jakub Śmieja_ - Fullstack Developer
+    -   _Jiří Krokviak_ - Fullstack Developer
+-   __Zákazník:__ Bumbrlíci s.r.o.
+-   __Název projektu:__ Bumbrlíci Sportoviště
+-   __Logo projektu:__
+  
+<img src="./images/logo.webp" align="center" width="35%">
+
+-   __Použité technologie:__ Django (Python), SQLite, Git, Bootstrap
 -   __Použitá vývojová metoda:__ SCRUM
 
 > Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. Built by experienced developers, it takes care of much of the hassle of web development, so you can focus on writing your app without needing to reinvent the wheel. It’s free and open source. [Django](https://www.djangoproject.com/)
