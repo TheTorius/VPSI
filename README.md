@@ -54,3 +54,7 @@ Webová aplikace je vytvořená v programovacím jazyce Python a využívá __Dj
 # Float chart diagram
 
 <img src="./images/float-chart.webp">
+
+# Wireframe
+
+Prototypový vzhled webové aplikace lze nalézt v doplňkovém souboru uložený v repozitáři [zde](./VPSI-wireframe.pdf).
