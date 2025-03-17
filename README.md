@@ -34,8 +34,8 @@
     -   __Back-end:__ Django (Python) w/SQLite
     -   __Zálohovací systém:__ Git (GitHub)
 -   __Použitá vývojová metoda:__ SCRUM
--   - Sprint/týden
--   - Plánováno 6 sprintů
+    - Sprint/týden
+    - Plánováno 6 sprintů
 
 > Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. Built by experienced developers, it takes care of much of the hassle of web development, so you can focus on writing your app without needing to reinvent the wheel. It’s free and open source. [Django](https://www.djangoproject.com/)
 
