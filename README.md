@@ -41,4 +41,8 @@ Webová aplikace je vytvořená v programovacím jazyce Python a využívá __Dj
 
 # Návrh databáze
 
-<img src="./DB.png" align="center" width="100%">
+<img src="./images/relational.png" align="center" width="100%">
+
+# Float chart diagram
+
+<img src="./images/float-chart.webp">
