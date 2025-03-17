@@ -5,11 +5,12 @@
 ## Informace o předmětu
 
 - __Organizace:__ VŠB-TUO FEI KI
-- __Předmět:__ Vybrané partie softwarového inženýrství
+- __Předmět:__ Vybrané partie ze softwarového inženýrství
 - __Zkratka předmětu:__ VPSI
 - __Ročník:__ 3.
 - __Garant předmětu:__ Ing. Svatopluk Štolfa, Ph.D.
 - __Vedoucí cvičení:__ Ing. Jakub Štolfa, Ph.D.
+- __Počet kreditů:__ 3
 
 ## Informace o projektu
 
@@ -28,10 +29,17 @@
   
 <img src="./images/logo.webp" align="center" width="35%">
 
--   __Použité technologie:__ Django (Python), SQLite, Git, Bootstrap
+-   __Použité technologie:__
+    -   __Front-end:__ Bootstrap
+    -   __Back-end:__ Django (Python) w/SQLite
+    -   __Zálohovací systém:__ Git (GitHub)
 -   __Použitá vývojová metoda:__ SCRUM
+-   - Sprint/týden
+-   - Plánováno 6 sprintů
 
 > Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. Built by experienced developers, it takes care of much of the hassle of web development, so you can focus on writing your app without needing to reinvent the wheel. It’s free and open source. [Django](https://www.djangoproject.com/)
+
+> Powerful, extensible, and feature-packed frontend toolkit. Build and customize with Sass, utilize prebuilt grid system and components, and bring projects to life with powerful JavaScript plugins. [Bootstrap](https://getbootstrap.com/)
 
 # Django
 
