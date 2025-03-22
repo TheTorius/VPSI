@@ -1,114 +1,131 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Moje aplikace{% endblock %}</title>
-    <!-- Přidání odkazu na Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>News Page</title>
+    <!-- Bootstrap CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional: Custom CSS -->
     {% load static %}
     <link href="{% static './style.css' %}" rel="stylesheet">
 </head>
 <body>
-    <style>
-        @keyframes animation {
-            0% {
-                scale: 1.0;
-            }
-            100% {
-                scale: 1.1;
-            }
-        }
-
-        .card-animated:hover {
-            animation: animation 200ms forwards;
-        }
-    </style>
-
-    <div class="row" style="padding-top: 15vh;">
-        <div class="col-sm-3">
-
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <!-- Logo -->
+            <a class="navbar-brand" href="{% url 'index' %}">LOGO</a>
+            <!-- Toggle button for mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Novinky</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'hriste' %}">Hřiště</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'rezervace' %}">Moje rezervace</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cennik' %}">Ceník</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'nastaveni' %}">Nastavení</a>
+                    </li>
+                </ul>
+                <!-- Login and Sign Up Buttons -->
+                <div class="d-flex align-items-center">
+                    {% if user.is_authenticated %}
+                        <span class="me-2">Signed as: {{ user.uzivatele.jmeno }}</span>
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger me-2">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Sign up</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <div class="col-sm-6">
-            <div class="card" style="background-size: cover; background-repeat: none; background-image: url('{% static 'logo.webp' %}');">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <h1 style="text-align: center;">Hlavní stránka</h1>
-                        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Featured Headline -->
+        <h6 class="text-center mb-4">News</h6>
+        <h1 class="text-center mb-4">Hlavní Novinky</h1>
+        <h4 class="text-center mb-4">Zobrazeno od nejvice aktualni</h4>
+        <!-- News Articles Grid -->
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <!-- Article 1 -->
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="me-2">🌍</span>Novinka 1
+                        </h5>
+                        <p class="card-text">
+                            Super dobrej a podrobnej a hlavne kratkej text <br>
+                            Super dobrej a podrobnej a hlavne kratkej text <br>
+                            Super dobrej a podrobnej a hlavne kratkej text 
+                        </p>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-4" style="padding-top: 10px;">
-                            <div class="card card-animated" style="height: 100%; background-color: rgba(255, 255, 255, 0.5);">
-                                <div class="card-header">
-                                    Registrace
-                                </div>
-                                <div class="card-body">
-                                    Stránka pro registraci nových uživatelů sportovního centra společnosti Bumbrlíci s.r.o.
-                                    <div class="row" style="padding-top: 10px;">
-                                        <div class="col-sm-12">
-                                            <a href="{% url 'register' %}"><button class="btn btn-primary" style="width: 100%;">Registrace</button></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4" style="padding-top: 10px;">
-                            <div class="card card-animated" style="height: 100%; background-color: rgba(255, 255, 255, 0.5);">
-                                <div class="card-header">
-                                    Přihlášení
-                                </div>
-                                <div class="card-body">
-                                    Pokud jste již registrovaným uživatele, můžete se na této stránce přihlásit a pokračovat tak k rezervačnímu systému.
-                                    <div class="row" style="padding-top: 10px;">
-                                        <div class="col-sm-12">
-                                            <a href="{% url 'login' %}"><button class="btn btn-primary" style="width: 100%; ">Login</button></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4" style="padding-top: 10px;">
-                            <div class="card card-animated" style="height: 100%; background-color: rgba(255, 255, 255, 0.5);">
-                                <div class="card-header">
-                                    Admin
-                                </div>
-                                <div class="card-body">
-                                    Jste adminem? Pojďte se přihlásit a spravovat systém.
-                                    <div class="row" style="padding-top: 10px; height: 100%;">
-                                        <div class="col-sm-12">
-                                            <a href="{% url 'admin:index' %}"><button class="btn btn-primary" style="width: 100%; ">Správce</button></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+            <!-- Article 2 -->
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="me-2">🔄</span>Novinka 2
+                        </h5>
+                        <p class="card-text">
+                            Super dobrej a podrobnej a hlavne kratkej text <br>
+                            Super dobrej a podrobnej a hlavne kratkej text <br>
+                            Super dobrej a podrobnej a hlavne kratkej text 
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Article 3 -->
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="me-2">⭐</span>Novinka 3
+                        </h5>
+                        <p class="card-text">
+                            Super dobrej a podrobnej a hlavne kratkej text <br>
+                            Super dobrej a podrobnej a hlavne kratkej text <br>
+                            Super dobrej a podrobnej a hlavne kratkej text 
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Article 4 -->
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="me-2">📋</span>Novinka 4
+                        </h5>
+                        <p class="card-text">
+                            Super dobrej a podrobnej a hlavne kratkej text <br>
+                            Super dobrej a podrobnej a hlavne kratkej text <br>
+                            Super dobrej a podrobnej a hlavne kratkej text 
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-3">
-
-        </div>
     </div>
 
-    <!-- Přidání skriptů pro správnou funkci Bootstrap komponent -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top" style=" position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%; background-color: rgba(0, 0, 0, 0.5);">
-        <p class="col-md-4 mb-0" style="text-decoration: none; color: white;">&copy; 2025 Bumbrlíci s.r.o.</p>
-    
-            <i class="bi bi-bootstrap-fill bi-lg align-items-center justify-content-center" style="text-decoration: none; color: white; font-size: 40px;"></i>
-    
-        <ul class="nav col-md-4 justify-content-end">
-          <li class="nav-item"><a href="{% url 'index' %}" class="nav-link px-2" style="text-decoration: none; color: white;">Home</a></li>
-          <li class="nav-item"><a href="{% url 'admin:index' %}" class="nav-link px-2" style="text-decoration: none; color: white;">Admin</a></li>
-        </ul>
-      </footer>
-
+    <!-- Bootstrap JS and Popper.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

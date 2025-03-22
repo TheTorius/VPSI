@@ -24,10 +24,16 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     
     # Přidání URL pro přihlášení a odhlášení
-    path('login/', auth_views.LoginView.as_view(template_name='rezervace/login.html'), name='login'),
+    #path('login/', auth_views.LoginView.as_view(template_name='rezervace/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('home/', views.home, name='home'), 
     path('register/', views.register, name='register'),
     path('index/', views.index, name='index'),
     path('', views.main, name='main'),
+    path('hriste/', views.hriste, name='hriste'),
+    path('rezervace/', views.rezervace, name='rezervace'),
+    path('cennik/', views.cennik, name='cennik'),
+    path('nastaveni/', views.nastaveni, name='nastaveni'),
+    path('signup/', views.signup_view, name='signup'),
+    path('login/',views.login_view, name='login')
 ]

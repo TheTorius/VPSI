@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hlavni stranka{% endblock %}</title>
+    <!-- Přidání odkazu na Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% load static %}
+    <link href="{% static './style.css' %}" rel="stylesheet">
+</head>
+<body>
+    <style>
+        @keyframes animation {
+            0% {
+                scale: 1.0;
+            }
+            100% {
+                scale: 1.1;
+            }
+        }
+
+        .card-animated:hover {
+            animation: animation 200ms forwards;
+        }
+    </style>
+
+    <div class="row" style="padding-top: 15vh;">
+        <div class="col-sm-3">
+
+        </div>
+        <div class="col-sm-6">
+            <div class="card" style="background-size: cover; background-repeat: none; background-image: url('{% static 'logo.webp' %}');">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h1 style="text-align: center;">Hlavní stránka</h1>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4" style="padding-top: 10px;">
+                            <div class="card card-animated" style="height: 100%; background-color: rgba(255, 255, 255, 0.5);">
+                                <div class="card-header">
+                                    Registrace
+                                </div>
+                                <div class="card-body">
+                                    Stránka pro registraci nových uživatelů sportovního centra společnosti Bumbrlíci s.r.o.
+                                    <div class="row" style="padding-top: 10px;">
+                                        <div class="col-sm-12">
+                                            <a href="{% url 'register' %}"><button class="btn btn-primary" style="width: 100%;">Registrace</button></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" style="padding-top: 10px;">
+                            <div class="card card-animated" style="height: 100%; background-color: rgba(255, 255, 255, 0.5);">
+                                <div class="card-header">
+                                    Přihlášení
+                                </div>
+                                <div class="card-body">
+                                    Pokud jste již registrovaným uživatele, můžete se na této stránce přihlásit a pokračovat tak k rezervačnímu systému.
+                                    <div class="row" style="padding-top: 10px;">
+                                        <div class="col-sm-12">
+                                            <a href="{% url 'login' %}"><button class="btn btn-primary" style="width: 100%; ">Login</button></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" style="padding-top: 10px;">
+                            <div class="card card-animated" style="height: 100%; background-color: rgba(255, 255, 255, 0.5);">
+                                <div class="card-header">
+                                    Admin
+                                </div>
+                                <div class="card-body">
+                                    Jste adminem? Pojďte se přihlásit a spravovat systém.
+                                    <div class="row" style="padding-top: 10px; height: 100%;">
+                                        <div class="col-sm-12">
+                                            <a href="{% url 'admin:index' %}"><button class="btn btn-primary" style="width: 100%; ">Správce</button></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+
+        </div>
+    </div>
+
+    <!-- Přidání skriptů pro správnou funkci Bootstrap komponent -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top" style=" position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%; background-color: rgba(0, 0, 0, 0.5);">
+        <p class="col-md-4 mb-0" style="text-decoration: none; color: white;">&copy; 2025 Bumbrlíci s.r.o.</p>
+    
+            <i class="bi bi-bootstrap-fill bi-lg align-items-center justify-content-center" style="text-decoration: none; color: white; font-size: 40px;"></i>
+    
+        <ul class="nav col-md-4 justify-content-end">
+          <li class="nav-item"><a href="{% url 'index' %}" class="nav-link px-2" style="text-decoration: none; color: white;">Home</a></li>
+          <li class="nav-item"><a href="{% url 'admin:index' %}" class="nav-link px-2" style="text-decoration: none; color: white;">Admin</a></li>
+        </ul>
+      </footer>
+
+</body>
+</html>
