@@ -87,7 +87,7 @@ def login_view(request):
                 messages.error(request, "Invalid email or password.")
     else:
         form = LoginForm()
-    return render(request, 'rezervace/index.html', {'form': form})
+    return render(request, 'rezervace/login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
