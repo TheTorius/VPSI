@@ -4,7 +4,7 @@ from .forms import RegistrationForm,LoginForm,SignUpForm
 from django.contrib.auth import login,authenticate,logout
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .models import Uzivatele, TypZakaznika
+from .models import Uzivatele, TypZakaznika, Novinky
 
 # Create your views here.
 @login_required
@@ -24,10 +24,14 @@ def register(request):
     return render(request, 'rezervace/register.html', {'form': form})
 
 def index(request):
-    return render(request, 'rezervace/index.html')
+    #return render(request, 'rezervace/index.html')
+    news = Novinky.objects.all().order_by('-vytvoreno')[:4]
+    return render(request, 'rezervace/index.html', {'news': news})
 
 def main(request):
-    return render(request, 'rezervace/index.html')
+    #return render(request, 'rezervace/index.html')
+    news = Novinky.objects.all().order_by('-vytvoreno')[:4]
+    return render(request, 'rezervace/index.html', {'news': news})
 
 def hriste(request):
     return render(request, 'rezervace/hriste.html')
