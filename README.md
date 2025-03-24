@@ -59,5 +59,14 @@ Webová aplikace je vytvořená v programovacím jazyce Python a využívá __Dj
 
 Prototypový vzhled webové aplikace lze nalézt v doplňkovém souboru uložený v repozitáři [zde](./VPSI-wireframe.pdf).
 
+# Diagram komponent
+
+<embed src="./VPSI_component_diagram.pdf" width="100%">
+
+# Use-case diagram
+
+<embed src="./VPSI_case_diagram.pdf" width="100%">
+
+
 # How to run
 `python manage.py runserver`
