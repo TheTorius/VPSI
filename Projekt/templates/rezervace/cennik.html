@@ -1,15 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title></title>
-  {% load static %}
-    <link href="{% static './style.css' %}" rel="stylesheet">
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Bootstrap CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional: Custom CSS -->
+    <!--<link href="/static/style.css" rel="stylesheet">-->
+    <!--{% load static %}-->
+    <!--<link href="{% static 'style.css' %}" rel="stylesheet">-->
+    <style>
+      .pricing-block {
+        border: 1px solid black;
+        padding: 20px;
+        text-align: center;
+        border-radius: 5px;
+        height: 100%; /* Ensure all blocks are the same height */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+    </style>
 </head>
 <body>
-
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script>
-  </script>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+      <!-- Logo -->
+      <a class="navbar-brand" href="{% url 'index' %}">LOGO</a>
+      <!-- Toggle button for mobile -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- Navigation Links -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'index' %}">Novinky</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'hriste' %}">Hřiště</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'rezervace' %}">Moje rezervace</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'cennik' %}">Ceník</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'nastaveni' %}">Nastavení</a>
+              </li>
+          </ul>
+          <!-- Login and Sign Up Buttons -->
+          <div class="d-flex align-items-center">
+              {% if user.is_authenticated %}
+                  <span class="me-2">Signed as: {{ user.uzivatele.jmeno }}</span>
+                  <a href="{% url 'logout' %}" class="btn btn-outline-danger me-2">Logout</a>
+              {% else %}
+                  <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+                  <a href="{% url 'signup' %}" class="btn btn-primary">Sign up</a>
+              {% endif %}
+          </div>
+      </div>
+  </div>
+</nav>
+<div class="container my-5">
+<h6 class="text-center mb-4">Objednání hriste</h6>
+        <h1 class="text-center mb-4">Cenník na hodinu</h1>
+        <div class="row">
+          <!-- Tennis Court -->
+          <div class="col-md-4 mb-4">
+            <div class="pricing-block">
+              <h3 class="text-center mb-4">Tenisový kurt</h3>
+              <div class="text-center mb-4 price">400Kč</div>
+              <ul>
+                <li>Feature text goes here</li>
+                <li>Feature text goes here</li>
+                <li>Feature text goes here</li>
+                <li>and more</li>
+              </ul>
+              <div class="text-center mb-4">
+                <a href="{% url 'rezervace' %}" class="btn btn-dark">Rezervovat</a>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Badminton Court -->
+          <div class="col-md-4 mb-4">
+            <div class="pricing-block">
+              <h3 class="text-center mb-4">Badmintonový kurty</h3>
+              <div class="text-center mb-4 price">200Kč</div>
+              <ul>
+                <li>Feature text goes here</li>
+                <li>Feature text goes here</li>
+                <li>Feature text goes here</li>
+                <li>and more</li>
+              </ul>
+              <div class="text-center mb-4">
+                <a href="{% url 'rezervace' %}" class="btn btn-dark">Rezervovat</a>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Ping Pong Table -->
+          <div class="col-md-4 mb-4">
+            <div class="pricing-block">
+              <h3 class="text-center mb-4">Ping pongový stůl</h3>
+              <div class="text-center mb-4 price">200Kč</div>
+              <ul>
+                <li>Feature text goes here</li>
+                <li>Feature text goes here</li>
+                <li>Feature text goes here</li>
+                <li>and more</li>
+              </ul>
+              <div class="text-center mb-4">
+                <a href="{% url 'rezervace' %}" class="btn btn-dark">Rezervovat</a>
+              </div>
+            </div>
+          </div>
+        </div>
+</div>
+<!-- Bootstrap JS and Popper.js via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
