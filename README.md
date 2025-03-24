@@ -61,6 +61,8 @@ Prototypový vzhled webové aplikace lze nalézt v doplňkovém souboru uložen�
 
 # Diagram komponent
 
+<embed src="./VPSI_component_diagram.pdf" width="100%">
+
 # Use-case diagram
 
-<img src="./VPSI component diagram.pdf" width="100%">
+<embed src="./VPSI_case_diagram.pdf" width="100%">
