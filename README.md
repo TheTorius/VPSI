@@ -58,3 +58,6 @@ Webová aplikace je vytvořená v programovacím jazyce Python a využívá __Dj
 # Wireframe
 
 Prototypový vzhled webové aplikace lze nalézt v doplňkovém souboru uložený v repozitáři [zde](./VPSI-wireframe.pdf).
+
+# How to run
+`python manage.py runserver`

@@ -121,6 +121,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/home'
 LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = '/login/'
 
 # Pokud chceš shromažďovat statické soubory pro produkci, nastav tuto možnost
 STATIC_ROOT = BASE_DIR / 'staticfiles'

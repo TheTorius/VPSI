@@ -5,6 +5,9 @@ from django.contrib.auth import login,authenticate,logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Uzivatele, TypZakaznika, Novinky
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Rezervace, Hriste
 
 # Create your views here.
 @login_required
@@ -36,8 +39,27 @@ def main(request):
 def hriste(request):
     return render(request, 'rezervace/hriste.html')
 
+
+@login_required
 def rezervace(request):
-    return render(request, 'rezervace/rezervace.html')
+    user = request.user.uzivatele  # vazba na náš model Uzivatele
+    reservations = Rezervace.objects.filter(uzivatel=user).order_by('-datum', '-cas_zacatku')
+
+    # --- Volitelné filtrování dle GET parametrů ---
+    datum = request.GET.get('datum')
+    typ_hriste = request.GET.get('typ_hriste')
+
+    if datum:
+        reservations = reservations.filter(datum=datum)
+    if typ_hriste and typ_hriste != '':
+        reservations = reservations.filter(hriste__typ=typ_hriste)
+
+    return render(request, 'rezervace/rezervace.html', {
+        'reservations': reservations,
+        'vybrane_datum': datum if datum else '',
+        'vybrany_typ': typ_hriste if typ_hriste else '',
+        'hriste_typy': Hriste.objects.values_list('typ', flat=True).distinct()
+    })
 
 def cennik(request):
     return render(request, 'rezervace/cennik.html')
