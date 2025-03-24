@@ -22,8 +22,50 @@
         justify-content: space-between;
       }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
 </head>
-<body>
+
+
+<style>
+  @keyframes zoomin {
+      0% {
+          scale: 1;
+      }
+      100% {
+          scale: 1.05;
+      }
+  }
+
+  .card-zoom:hover {
+      animation: zoomin linear forwards 175ms;
+  }
+
+  #particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;  /* Umístí částice za obsah stránky */
+  }
+
+  @keyframes btn-change-color {
+    0% {
+      background-color: rgba(0, 0, 0, alpha);
+    }
+
+    100% {
+      background-color: red;
+    }
+  }
+
+  .btn-color:hover {
+    animation: btn-change-color linear forwards 250ms;
+  }
+</style>
+
+<body style="background-color: #0D4715;">
+  <div id="particles-js"></div>
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
@@ -66,29 +108,41 @@
   </div>
 </nav>
 <div class="container my-5">
-<h6 class="text-center mb-4">Objednání hriste</h6>
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+      <div class="card" style="padding-top: 15px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
+        <h6 class="text-center mb-4" style="padding-top: 15px;">Objednání hriste</h6>
         <h1 class="text-center mb-4">Cenník na hodinu</h1>
-        <div class="row">
+      </div>
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
+      
+        <div class="row" style="padding-top: 25px;">
           <!-- Tennis Court -->
           <div class="col-md-4 mb-4">
-            <div class="pricing-block">
-              <h3 class="text-center mb-4">Tenisový kurt</h3>
-              <div class="text-center mb-4 price">400Kč</div>
-              <ul>
-                <li>Feature text goes here</li>
-                <li>Feature text goes here</li>
-                <li>Feature text goes here</li>
-                <li>and more</li>
-              </ul>
-              <div class="text-center mb-4">
-                <a href="{% url 'rezervace' %}" class="btn btn-dark">Rezervovat</a>
+            <div class="card card-zoom" style="padding-top: 15px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
+              <div>
+                <h3 class="text-center mb-4">Tenisový kurt</h3>
+                <div class="text-center mb-4 price">400Kč</div>
+                <ul>
+                  <li>Feature text goes here</li>
+                  <li>Feature text goes here</li>
+                  <li>Feature text goes here</li>
+                  <li>and more</li>
+                </ul>
+                <div class="text-center mb-4">
+                  <a href="{% url 'rezervace' %}" class="btn btn-dark btn-color">Rezervovat</a>
+                </div>
               </div>
             </div>
           </div>
       
           <!-- Badminton Court -->
           <div class="col-md-4 mb-4">
-            <div class="pricing-block">
+            <div class="card card-zoom" style="padding-top: 15px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
+              <div>
               <h3 class="text-center mb-4">Badmintonový kurty</h3>
               <div class="text-center mb-4 price">200Kč</div>
               <ul>
@@ -98,14 +152,16 @@
                 <li>and more</li>
               </ul>
               <div class="text-center mb-4">
-                <a href="{% url 'rezervace' %}" class="btn btn-dark">Rezervovat</a>
+                <a href="{% url 'rezervace' %}" class="btn btn-dark btn-color">Rezervovat</a>
+              </div>
               </div>
             </div>
           </div>
       
           <!-- Ping Pong Table -->
           <div class="col-md-4 mb-4">
-            <div class="pricing-block">
+            <div class="card card-zoom" style="padding-top: 15px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
+              <div>
               <h3 class="text-center mb-4">Ping pongový stůl</h3>
               <div class="text-center mb-4 price">200Kč</div>
               <ul>
@@ -115,8 +171,9 @@
                 <li>and more</li>
               </ul>
               <div class="text-center mb-4">
-                <a href="{% url 'rezervace' %}" class="btn btn-dark">Rezervovat</a>
+                <a href="{% url 'rezervace' %}" class="btn btn-dark btn-color">Rezervovat</a>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -124,5 +181,138 @@
 <!-- Bootstrap JS and Popper.js via CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script>
+  // Zkontrolujeme, že tag_id je správně definován a že existuje odpovídající prvek
+var tag_id = 'particles-js'; // ID elementu, který bude obsahovat částice
+var pJS_tag = document.getElementById(tag_id);
+
+if (pJS_tag) {
+var pJS_canvas_class = 'particles-js-canvas-el';
+var exist_canvas = pJS_tag.getElementsByClassName(pJS_canvas_class);
+
+// Pokud existuje starý canvas, odstraníme ho
+if (exist_canvas.length) {
+  while (exist_canvas.length > 0) {
+    pJS_tag.removeChild(exist_canvas[0]);
+  }
+}
+
+console.log("Canvas inicializován");
+} else {
+console.error("Element s ID '" + tag_id + "' neexistuje. Ujistěte se, že máte správné ID v HTML.");
+}
+
+
+  particlesJS('particles-js', {
+"particles": {
+  "number": {
+    "value": 8,
+    "density": {
+      "enable": true,
+      "value_area": 800
+    }
+  },
+  "color": {
+    "value": "#e9762b"
+  },
+  "shape": {
+    "type": "polygon",
+    "stroke": {
+      "width": 0,
+      "color": "#000"
+    },
+    "polygon": {
+      "nb_sides": 6
+    },
+    "image": {
+      "src": "img/github.svg",
+      "width": 100,
+      "height": 100
+    }
+  },
+  "opacity": {
+    "value": 0.3,
+    "random": true,
+    "anim": {
+      "enable": false,
+      "speed": 1,
+      "opacity_min": 0.1,
+      "sync": false
+    }
+  },
+  "size": {
+    "value": 160,
+    "random": false,
+    "anim": {
+      "enable": true,
+      "speed": 10,
+      "size_min": 40,
+      "sync": false
+    }
+  },
+  "line_linked": {
+    "enable": false,
+    "distance": 200,
+    "color": "#ffffff",
+    "opacity": 1,
+    "width": 2
+  },
+  "move": {
+    "enable": true,
+    "speed": 4,
+    "direction": "none",
+    "random": false,
+    "straight": false,
+    "out_mode": "out",
+    "bounce": false,
+    "attract": {
+      "enable": false,
+      "rotateX": 600,
+      "rotateY": 1200
+    }
+  }
+},
+"interactivity": {
+  "detect_on": "canvas",
+  "events": {
+    "onhover": {
+      "enable": false,
+      "mode": "grab"
+    },
+    "onclick": {
+      "enable": false,
+      "mode": "push"
+    },
+    "resize": true
+  },
+  "modes": {
+    "grab": {
+      "distance": 400,
+      "line_linked": {
+        "opacity": 1
+      }
+    },
+    "bubble": {
+      "distance": 400,
+      "size": 40,
+      "duration": 2,
+      "opacity": 8,
+      "speed": 3
+    },
+    "repulse": {
+      "distance": 200,
+      "duration": 0.4
+    },
+    "push": {
+      "particles_nb": 4
+    },
+    "remove": {
+      "particles_nb": 2
+    }
+  }
+},
+"retina_detect": true
+  });
+</script>
 </body>
 </html>
