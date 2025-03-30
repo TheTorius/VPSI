@@ -35,5 +35,6 @@ urlpatterns = [
     path('cennik/', views.cennik, name='cennik'),
     path('nastaveni/', views.nastaveni, name='nastaveni'),
     path('signup/', views.signup_view, name='signup'),
-    path('login/',views.login_view, name='login')
+    path('login/',views.login_view, name='login'),
+    path("reserve/<int:court>/<str:hour>/", views.reserve_hour, name="reserve")
 ]

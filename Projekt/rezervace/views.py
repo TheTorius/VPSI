@@ -37,8 +37,21 @@ def main(request):
     return render(request, 'rezervace/index.html', {'news': news})
 
 def hriste(request):
-    return render(request, 'rezervace/hriste.html')
+    # Example hours and reserved times
+    hours = [f"{h:02d}:00" for h in range(8, 21)]  # 08:00 to 20:00
+    court1_reserved = ["10:00", "14:00"]  # Example reserved times for Court 1
+    court2_reserved = ["09:00", "15:00"]  # Example reserved times for Court 2
+    context = {
+        "hours": hours,
+        "court1_reserved": court1_reserved,
+        "court2_reserved": court2_reserved,
+    }
+    return render(request, "rezervace/hriste.html", context)
 
+def reserve_hour(request, court, hour):
+    # Logic to save the reservation (e.g., to a database)
+    # Redirect back to reservation page after saving
+    return redirect("hriste")
 
 @login_required
 def rezervace(request):

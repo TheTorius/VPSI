@@ -48,6 +48,91 @@
     </div>
 </nav>
 
+<div class="container my-5">
+    <!-- Hlavička stránky -->
+    <div class="row">
+      <div class="col-sm-3"></div>
+      <div class="col-sm-6">
+        <div class="card text-center" style="padding: 15px; border-width: 4px; 
+             border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
+          <h2>Rezervace v jednom dnu</h2>
+          <p>Zde naleznete přehled rezervací hrist na vybraný den.</p>
+        </div>
+      </div>
+      <div class="col-sm-3"></div>
+    </div>
+
+    <!-- Formulář pro filtrování (datum + typ hřiště) -->
+    <div class="row mt-4 mb-4">
+      <div class="col-sm-12">
+        <div class="card" style="padding: 20px; background: rgba(255, 255, 255, 0.5);">
+          <form method="GET" class="row g-3">
+            <div class="col-auto">
+              <label for="datum" class="form-label">Datum</label>
+              <input type="date" name="datum" id="datum" value="{{ vybrane_datum }}" class="form-control" />
+            </div>
+            <div class="col-auto">
+              <label for="typ_hriste" class="form-label">Typ hřiště</label>
+              <select name="typ_hriste" id="typ_hriste" class="form-select">
+                <option value="">-- Všechny --</option>
+                {% for typ in hriste_typy %}
+                  <option value="{{ typ }}" {% if typ == vybrany_typ %}selected{% endif %}>{{ typ }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-auto align-self-end">
+              <button type="submit" class="btn btn-dark">Hledat</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4 mb-4">
+        <div class="col-sm-12">
+          <h3>Vyberte čas rezervace</h3>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Hřiště</th>
+                  {% for hour in hours %}
+                    <th scope="col">{{ hour }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Hřiště 1</th>
+                  {% for hour in hours %}
+                    <td>
+                      {% if hour in court1_reserved %}
+                        <span class="badge bg-danger">Obsazeno</span>
+                      {% else %}
+                        <a href="{% url 'reserve' court=1 hour=hour %}" class="btn btn-sm btn-success">Rezervovat</a>
+                      {% endif %}
+                    </td>
+                  {% endfor %}
+                </tr>
+                <tr>
+                  <th scope="row">Hřiště 2</th>
+                  {% for hour in hours %}
+                    <td>
+                      {% if hour in court2_reserved %}
+                        <span class="badge bg-danger">Obsazeno</span>
+                      {% else %}
+                        <a href="{% url 'reserve' court=2 hour=hour %}" class="btn btn-sm btn-success">Rezervovat</a>
+                      {% endif %}
+                    </td>
+                  {% endfor %}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+
   <!-- Bootstrap JS and Popper.js via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
