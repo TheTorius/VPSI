@@ -16,7 +16,8 @@
             <!-- Logo -->
             <a class="navbar-brand" href="{% url 'index' %}">LOGO</a>
             <!-- Toggle button for mobile -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <!-- Navigation Links -->
@@ -31,17 +32,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'rezervace' %}">Moje rezervace</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'cennik' %}">Ceník</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'nastaveni' %}">Nastavení</a>
-                    </li>
                 </ul>
                 <!-- Login and Sign Up Buttons -->
                 <div class="d-flex align-items-center">
                     {% if user.is_authenticated %}
-                        <span class="me-2">Signed as: {{ user.uzivatele.jmeno}}</span>
+                        <span class="me-2">Signed as: {{ user.uzivatele.jmeno }}</span>
                         <a href="{% url 'logout' %}" class="btn btn-outline-danger me-2">Logout</a>
                     {% else %}
                         <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
