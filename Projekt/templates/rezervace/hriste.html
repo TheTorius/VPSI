@@ -8,9 +8,29 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Optional: Custom CSS -->
     {% load static %}
-    <link href="{% static './style.css' %}" rel="stylesheet">
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+  <style>
+    @keyframes zoomin {
+        0% { scale: 1; }
+        100% { scale: 1.05; }
+    }
+    .card-zoom:hover {
+      animation: zoomin linear forwards 175ms;
+    }
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1; 
+    }
+  </style>
 </head>
-<body>
+<body style="background-color: #0D4715;">
+
+  <div id="particles-js"></div>
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -55,7 +75,7 @@
       <div class="col-sm-6">
         <div class="card text-center" style="padding: 15px; border-width: 4px; 
              border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-          <h2>Rezervace v jednom dnu</h2>
+          <h2>Rezervace</h2>
           <p>Zde naleznete přehled rezervací hrist na vybraný den.</p>
         </div>
       </div>
@@ -84,57 +104,115 @@
               <button type="submit" class="btn btn-dark">Hledat</button>
             </div>
           </form>
+
+          <div class="row">
+            <div class="col-sm-12">
+              <hr class="hr">
+            </div>
+          </div>
+          <div class="row mt-4 mb-4">
+            <div class="col-sm-12">
+              <h3>Vyberte čas rezervace</h3>
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center">
+                  <thead class="table-light">
+                    <tr>
+                      <th scope="col">Hřiště</th>
+                      {% for hour in hours %}
+                        <th scope="col">{{ hour }}</th>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Hřiště 1</th>
+                      {% for hour in hours %}
+                        <td>
+                          {% if hour in court1_reserved %}
+                            <span class="badge bg-danger">Obsazeno</span>
+                          {% else %}
+                            <a href="{% url 'reserve' court=1 hour=hour %}" class="btn btn-sm btn-success">Rezervovat</a>
+                          {% endif %}
+                        </td>
+                      {% endfor %}
+                    </tr>
+                    <tr>
+                      <th scope="row">Hřiště 2</th>
+                      {% for hour in hours %}
+                        <td>
+                          {% if hour in court2_reserved %}
+                            <span class="badge bg-danger">Obsazeno</span>
+                          {% else %}
+                            <a href="{% url 'reserve' court=2 hour=hour %}" class="btn btn-sm btn-success">Rezervovat</a>
+                          {% endif %}
+                        </td>
+                      {% endfor %}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
-
-    <div class="row mt-4 mb-4">
-        <div class="col-sm-12">
-          <h3>Vyberte čas rezervace</h3>
-          <div class="table-responsive">
-            <table class="table table-bordered table-hover text-center">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col">Hřiště</th>
-                  {% for hour in hours %}
-                    <th scope="col">{{ hour }}</th>
-                  {% endfor %}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">Hřiště 1</th>
-                  {% for hour in hours %}
-                    <td>
-                      {% if hour in court1_reserved %}
-                        <span class="badge bg-danger">Obsazeno</span>
-                      {% else %}
-                        <a href="{% url 'reserve' court=1 hour=hour %}" class="btn btn-sm btn-success">Rezervovat</a>
-                      {% endif %}
-                    </td>
-                  {% endfor %}
-                </tr>
-                <tr>
-                  <th scope="row">Hřiště 2</th>
-                  {% for hour in hours %}
-                    <td>
-                      {% if hour in court2_reserved %}
-                        <span class="badge bg-danger">Obsazeno</span>
-                      {% else %}
-                        <a href="{% url 'reserve' court=2 hour=hour %}" class="btn btn-sm btn-success">Rezervovat</a>
-                      {% endif %}
-                    </td>
-                  {% endfor %}
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
   </div>
 
   <!-- Bootstrap JS and Popper.js via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+  <script>
+    var tag_id = 'particles-js';
+    var pJS_tag = document.getElementById(tag_id);
+    if (pJS_tag) {
+      var exist_canvas = pJS_tag.getElementsByClassName('particles-js-canvas-el');
+      if (exist_canvas.length) {
+        while (exist_canvas.length > 0) {
+          pJS_tag.removeChild(exist_canvas[0]);
+        }
+      }
+    }
+
+    particlesJS('particles-js', {
+      "particles": {
+        "number": { "value": 8, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#e9762b" },
+        "shape": {
+          "type": "polygon",
+          "polygon": { "nb_sides": 6 }
+        },
+        "opacity": {
+          "value": 0.3,
+          "random": true
+        },
+        "size": {
+          "value": 160,
+          "random": false,
+          "anim": {
+            "enable": true,
+            "speed": 10,
+            "size_min": 40,
+            "sync": false
+          }
+        },
+        "line_linked": { "enable": false },
+        "move": {
+          "enable": true,
+          "speed": 1.5
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": { "enable": false, "mode": "grab" },
+          "onclick": { "enable": false, "mode": "push" },
+          "resize": true
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
 </body>
 </html>

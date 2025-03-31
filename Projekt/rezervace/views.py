@@ -32,9 +32,18 @@ def index(request):
     return render(request, 'rezervace/index.html', {'news': news})
 
 def main(request):
-    #return render(request, 'rezervace/index.html')
-    news = Novinky.objects.all().order_by('-vytvoreno')[:4]
-    return render(request, 'rezervace/index.html', {'news': news})
+    hours = [f"{h:02d}:00" for h in range(8, 21)]  # 08:00 to 20:00
+    court1_reserved = ["10:00", "14:00"]  # Example reserved times for Court 1
+    court2_reserved = ["09:00", "15:00"]  # Example reserved times for Court 2
+    context = {
+        "hours": hours,
+        "court1_reserved": court1_reserved,
+        "court2_reserved": court2_reserved,
+    }
+    return render(request, "rezervace/hriste.html", context)
+    #return render(request, 'rezervace/rezervace.html')
+    #news = Novinky.objects.all().order_by('-vytvoreno')[:4]
+    #return render(request, 'rezervace/index.html', {'news': news})
 
 def hriste(request):
     # Example hours and reserved times

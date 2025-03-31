@@ -45,7 +45,8 @@
 
 Webová aplikace je vytvořená v programovacím jazyce Python a využívá __Django__ Frameworku. Aplikace je v prototypové fázi a jejím cílem je splnit požadavky dané uživatelem. V průběhu projektu je zákazník dotazován a popřípadě je tým usměrňován ke správnému výsledku aplikace a splnění všech požadavků, které byly dány.
 
-> __superuser:__ root, __password:__ 123
+> __superuser:__ root, __password:__ 123  
+> __Uživatel:__ test@test.com, __password:__ 123
 
 # Návrh databáze
 
