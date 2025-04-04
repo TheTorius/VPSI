@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Seznam zapůjčených předmětů - Rezervace č. {{ rez.id }}</title>
+
+  <!-- Bootstrap CSS pro styl -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Vlastní CSS -->
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding: 40px;
+    }
+    @media print {
+      .no-print {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2 class="mb-4">Seznam zapůjčených předmětů</h2>
+
+    <h3>Rezervace č. {{ rez.rezervace.id }} - {{ rez.rezervace.hriste.nazev }} ({{ rez.rezervace.hriste.typ }})</h3>
+    <p><strong>Datum rezervace:</strong> {{ rez.rezervace.datum|date:"d.m.Y" }} <br>
+       <strong>Čas:</strong> {{ rez.rezervace.cas_zacatku|time:"H:i" }} - {{ rez.rezervace.cas_konce|time:"H:i" }}</p>
+
+    <h4>Seznam zapůjčených předmětů</h4>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Název</th>
+          <th>Množství</th>
+          <th>Cena (Kč/ks)</th>
+          <th>Typ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ rez.zapujcka.nazev }}</td>
+          <td>{{ rez.mnozstvi }}</td>
+          <td>{{ rez.cena_za_kus }} Kč</td>
+          <td>{{ rez.zapujcka.typ }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="no-print">
+      <button onclick="window.print()" class="btn btn-primary">Tisknout</button>
+    </div>
+
+  </div>
+
+</body>
+</html>

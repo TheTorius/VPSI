@@ -29,6 +29,13 @@
 </head>
 
 <body style="background-color: #0D4715;">
+  {% if error %}
+      <script>
+          alert("{{ message }}");
+          window.location.href = '/index';
+      </script>
+  {% endif %}
+
   <!-- Částice na pozadí (pokud chcete stejný efekt jako na News page) -->
   <div id="particles-js"></div>
   
@@ -114,6 +121,7 @@
       <div class="col-sm-12">
         <div class="card" style="padding: 20px; border-width: 4px; 
              border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
+          <h3>Seznam rezervací</h3>
           {% if reservations %}
             <div class="table-responsive">
               <table class="table table-hover align-middle">
@@ -123,7 +131,7 @@
                     <th>Čas</th>
                     <th>Hřiště</th>
                     <th>Stav</th>
-                    <th>Cena (Kč)</th>
+                    <th>Cena (Kč/h)</th>
                     <th>Akce</th>
                   </tr>
                 </thead>
@@ -136,10 +144,12 @@
                     <td>{{ rez.get_stav_display }}</td>
                     <td>{{ rez.cena }}</td>
                     <td>
-                      <!-- Zrušení rezervace (fiktivní odkaz) -->
-                      <a href="#" class="btn btn-danger btn-sm">Zrušit</a>
-                      <!-- "Tisk" rezervace (fiktivní odkaz) -->
-                      <a href="#" class="btn btn-secondary btn-sm">Tisk</a>
+                      <a href="{% url 'zrusit_rezervaci' rez.id %}"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci?');">
+                        Zrušit
+                      </a>
+                      <a href="{% url 'tisk_rezervace' rez.id %}" target="_blank" class="btn btn-secondary btn-sm">Tisk</a>
                     </td>
                   </tr>
                   {% endfor %}
@@ -152,7 +162,58 @@
         </div>
       </div>
     </div>
+    <br>
+    <!-- Seznam zapujcek -->
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card" style="padding: 20px; border-width: 4px; 
+             border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
+          <h3>Seznam zápujček</h3>
+          {% if reservations_zapujcky %}
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>Nazev</th>
+                    <th>Rezervace</th>
+                    <th>Množství</th>
+                    <th>Cena (Kč/ks)</th>
+                    <th>Typ</th>
+                    <th>Akce</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for rez in reservations_zapujcky %}
+                  <tr>
+                    <td>{{ rez.zapujcka.nazev }}</td>
+                    <td>{{ rez.rezervace.hriste.nazev }} ({{ rez.rezervace.hriste.typ }}) - {{ rez.rezervace.datum|date:"d.m.Y" }} ({{ rez.rezervace.cas_zacatku|time:"H:i" }} - {{ rez.rezervace.cas_konce|time:"H:i" }})</td>
+                    <td>{{ rez.mnozstvi }}</td>
+                    <td>{{ rez.cena_za_kus}}</td>
+                    <td>{{ rez.zapujcka.typ }}</td>
+                    <td>
+                      <a href="{% url 'zrusit_rezervaci' rez.id %}"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci?');">
+                        Zrušit
+                      </a>
+                      <a href="{% url 'tisk_rezervace_zapujcka' rez.id %}" target="_blank" class="btn btn-secondary btn-sm">Tisk</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p>Nemáte žádné zápujčky.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+
   </div>
+
+
 
   <!-- Bootstrap Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

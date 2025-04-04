@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 from .models import Uzivatele, TypZakaznika, Novinky
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Rezervace, Hriste
+from .models import Rezervace, Hriste, RezervaceZapujcky
+from django.core.mail import send_mail
 
 # Create your views here.
 @login_required
@@ -66,6 +67,8 @@ def reserve_hour(request, court, hour):
 def rezervace(request):
     user = request.user.uzivatele  # vazba na náš model Uzivatele
     reservations = Rezervace.objects.filter(uzivatel=user).order_by('-datum', '-cas_zacatku')
+    reservations_zapujcky = RezervaceZapujcky.objects.filter(rezervace__uzivatel=user).order_by('-rezervace__datum', '-rezervace__cas_zacatku')
+
 
     # --- Volitelné filtrování dle GET parametrů ---
     datum = request.GET.get('datum')
@@ -73,15 +76,59 @@ def rezervace(request):
 
     if datum:
         reservations = reservations.filter(datum=datum)
+        reservations_zapujcky = reservations_zapujcky.filter(rezervace__datum=datum)
     if typ_hriste and typ_hriste != '':
         reservations = reservations.filter(hriste__typ=typ_hriste)
+        reservations_zapujcky = reservations_zapujcky.filter(rezervace__hriste__typ=typ_hriste)
+
 
     return render(request, 'rezervace/rezervace.html', {
         'reservations': reservations,
+        'reservations_zapujcky': reservations_zapujcky,
         'vybrane_datum': datum if datum else '',
         'vybrany_typ': typ_hriste if typ_hriste else '',
         'hriste_typy': Hriste.objects.values_list('typ', flat=True).distinct()
     })
+
+def zrusit_rezervaci(request, rez_id):
+    try:
+        rezervace = get_object_or_404(Rezervace, id=rez_id, uzivatel=request.user.uzivatele)
+        uzivatel = rezervace.uzivatel
+        datum = rezervace.datum
+        hriste = rezervace.hriste.nazev
+
+        rezervace.delete()
+
+        # Odeslání e-mailu
+        send_mail(
+            subject="Vaše rezervace byla zrušena",
+            message=f"Dobrý den {uzivatel.jmeno},\n\nVaše rezervace na {hriste} dne {datum.strftime('%d.%m.%Y')} byla úspěšně zrušena.",
+            from_email=None,  # použije DEFAULT_FROM_EMAIL
+            recipient_list=[uzivatel.email],
+            fail_silently=False,
+        )
+
+        news = Novinky.objects.all().order_by('-vytvoreno')[:4]
+        context = {
+            'news': news,
+            'success': True,  # Přidáme informaci o úspěchu
+            'message': "Rezervace byla úspěšně zrušena a e-mail odeslán."
+        }
+
+    except Exception as e:
+        context = {'error': True, 'message': f"Došlo k chybě při odesílání e-mailu o zruseni rezervace"}
+    
+    return render(request, 'rezervace/index.html', context)
+
+def tisk_rezervace(request, rez_id):
+    rezervace = get_object_or_404(Rezervace, id=rez_id)
+    zapujcky = RezervaceZapujcky.objects.filter(rezervace=rezervace)
+    return render(request, 'rezervace/tisk.html', {'rezervace': rezervace, 'zapujcky': zapujcky})
+
+def tisk_rezervace_zapujcka(request, rez_id):
+    rezervace = get_object_or_404(RezervaceZapujcky, id=rez_id)
+    return render(request, 'rezervace/tiskZapujcka.html', {'rez': rezervace})
+
 
 def cennik(request):
     return render(request, 'rezervace/cennik.html')

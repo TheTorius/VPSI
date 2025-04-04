@@ -52,6 +52,12 @@
 </style>
 
 <body style="background-color: #0D4715;">
+  {% if error %}
+      <script>
+          alert("{{ message }}");
+          window.location.href = '/index';
+      </script>
+  {% endif %}
     <div id="particles-js"></div>
 
     <!-- Navigation Bar -->
