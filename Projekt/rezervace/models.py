@@ -56,7 +56,7 @@ class Uzivatele(models.Model):
     typ_zakaznika = models.ForeignKey(TypZakaznika, on_delete=models.SET_NULL, null=True, related_name='uzivatele')
 
     def __str__(self):
-        return f"{self.jmeno} {self.prijmeni} ({self.email})"
+        return f"{self.jmeno} {self.prijmeni} {self.email} {self.telefon}"
 
 class Hriste(models.Model):
     nazev = models.CharField(max_length=100)

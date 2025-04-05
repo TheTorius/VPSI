@@ -67,6 +67,7 @@
                 {% if user.is_authenticated %}
                     <span class="me-2">Signed as: {{ user.uzivatele.jmeno }}</span>
                     <a href="{% url 'logout' %}" class="btn btn-outline-danger me-2">Logout</a>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-primary me-2">Nastavení</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
                     <a href="{% url 'signup' %}" class="btn btn-primary">Sign up</a>

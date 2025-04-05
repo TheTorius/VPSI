@@ -1,12 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .forms import RegistrationForm,LoginForm,SignUpForm
-from django.contrib.auth import login,authenticate,logout
+from .forms import RegistrationForm,LoginForm,SignUpForm,UserUpdateForm
+from django.contrib.auth import login,authenticate,logout,update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Uzivatele, TypZakaznika, Novinky
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from .models import Rezervace, Hriste, RezervaceZapujcky
 from django.core.mail import send_mail
 
@@ -15,6 +16,30 @@ from django.core.mail import send_mail
 def home(request):
     return render(request, 'rezervace/home.html') 
 
+@login_required
+def profile_view(request):
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=request.user.uzivatele)
+        form2 = PasswordChangeForm(request.user, request.POST)
+        if 'change_info' in request.POST and form.is_valid():
+            form.save()
+            messages.success(request,"Informace byly změněny!")
+            form = UserUpdateForm(instance=request.user.uzivatele)    
+            form2 = PasswordChangeForm(request.user)
+            return render(request,'rezervace/profile.html',{'form':form, 'form2':form2})
+        if 'change_password' in request.POST and form2.is_valid():
+            user = form2.save()
+            update_session_auth_hash(request, user)  # Aby uživatel zůstal přihlášen po změně hesla
+            messages.success(request, 'Heslo bylo úspěšně změněno!')
+            form = UserUpdateForm(instance=request.user.uzivatele)    
+            form2 = PasswordChangeForm(request.user)
+            return render(request,'rezervace/profile.html',{'form':form, 'form2':form2})
+        
+    else:
+        form = UserUpdateForm(instance=request.user.uzivatele)    
+        form2 = PasswordChangeForm(request.user)
+
+    return render(request,'rezervace/profile.html',{'form':form, 'form2':form2})
 
 def register(request):
     if request.method == 'POST':
@@ -33,18 +58,10 @@ def index(request):
     return render(request, 'rezervace/index.html', {'news': news})
 
 def main(request):
-    hours = [f"{h:02d}:00" for h in range(8, 21)]  # 08:00 to 20:00
-    court1_reserved = ["10:00", "14:00"]  # Example reserved times for Court 1
-    court2_reserved = ["09:00", "15:00"]  # Example reserved times for Court 2
-    context = {
-        "hours": hours,
-        "court1_reserved": court1_reserved,
-        "court2_reserved": court2_reserved,
-    }
-    return render(request, "rezervace/hriste.html", context)
     #return render(request, 'rezervace/rezervace.html')
-    #news = Novinky.objects.all().order_by('-vytvoreno')[:4]
-    #return render(request, 'rezervace/index.html', {'news': news})
+    #return render(request, 'rezervace/index.html')
+    news = Novinky.objects.all().order_by('-vytvoreno')[:4]
+    return render(request, 'rezervace/index.html', {'news': news})
 
 def hriste(request):
     # Example hours and reserved times

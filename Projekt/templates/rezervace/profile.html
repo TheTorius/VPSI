@@ -99,8 +99,70 @@
         </div>
     </nav>
 
+
     <div class="row">
-        <!----------------Obsah----------------->
+        {% if messages %}
+                    <div class="alert alert-info">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+
+        </div>
+        <div class="col-sm-6">
+            <div class="row" style="padding-top: 15px;">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+                    <div class="card" style="border-radius: 10px; border-width: 3px; border-color: white; background-color: rgba(255, 255, 255, 0.35);">
+                        <div class="card-body" style="text-align: center; ">
+                            <h1>Nastavení</h1>
+                            <hr class="hr">
+                            <p>
+                                Tato stránka slouží pro úpravu uživatelských údajů
+                                aktuálně přihlášeného uživatle.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1"></div>
+            </div>
+            <div class="row" style="padding-top: 15px;">
+                <div class="col-sm-12">
+                    <div class="card" style="border-radius: 10px; border-width: 3px; border-color: white; background-color: rgba(255, 255, 255, 0.35);">
+                        <div class="card-body">
+                            <h2 style="text-align: center;">Nastavení informací</h2>
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                {% for error in form.errors %}
+                                    <div class="alert alert-danger">{{ error }}</div>
+                                {% endfor %}
+                                <button class="btn btn-primary" type="submit"  name="change_info">Uložit</button>
+                            </form>
+                            <hr class="hr">
+                            <h2 style="text-align: center;">Nastavení hesla</h2>
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form2.as_p }}
+                                {% for error in form2.errors %}
+                                    <div class="alert alert-danger">{{ error }}</div>
+                                {% endfor %}
+                                <button class="btn btn-primary" type="submit"  name="change_password">Uložit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            
+        </div>
+    </div>
+
     </div>
 
     <!-- Bootstrap JS and Popper.js via CDN -->
