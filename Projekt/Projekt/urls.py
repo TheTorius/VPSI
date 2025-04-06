@@ -35,6 +35,7 @@ urlpatterns = [
     path('rezervace/', views.rezervace, name='rezervace'),
     path('rezervace/zrusit/<int:rez_id>/', views.zrusit_rezervaci, name='zrusit_rezervaci'),
     path('rezervace/tisk/<int:rez_id>/', views.tisk_rezervace, name='tisk_rezervace'),
+    path('zrusit-rezervaci-zapujcky/<int:rez_id>/', views.zrusit_rezervaci_zapujcky, name='zrusit_rezervaci_zapujcky'),
     path('tisk-rezervace-zapujcka/<int:rez_id>/', views.tisk_rezervace_zapujcka, name='tisk_rezervace_zapujcka'),
     path('cennik/', views.cennik, name='cennik'),
     path('nastaveni/', views.nastaveni, name='nastaveni'),

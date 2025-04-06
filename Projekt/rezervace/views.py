@@ -114,8 +114,6 @@ def zrusit_rezervaci(request, rez_id):
         datum = rezervace.datum
         hriste = rezervace.hriste.nazev
 
-        rezervace.delete()
-
         # Odeslání e-mailu
         send_mail(
             subject="Vaše rezervace byla zrušena",
@@ -124,6 +122,7 @@ def zrusit_rezervaci(request, rez_id):
             recipient_list=[uzivatel.email],
             fail_silently=False,
         )
+        rezervace.delete()
 
         news = Novinky.objects.all().order_by('-vytvoreno')[:4]
         context = {
@@ -136,6 +135,47 @@ def zrusit_rezervaci(request, rez_id):
         context = {'error': True, 'message': f"Došlo k chybě při odesílání e-mailu o zruseni rezervace"}
     
     return render(request, 'rezervace/index.html', context)
+
+def zrusit_rezervaci_zapujcky(request, rez_id):
+    try:
+        rezervace = get_object_or_404(RezervaceZapujcky, id=rez_id, rezervace__uzivatel=request.user.uzivatele)
+        uzivatel = rezervace.rezervace.uzivatel
+        datum = rezervace.rezervace.datum
+        hriste = rezervace.rezervace.hriste.nazev
+        predmet = rezervace.zapujcka.nazev
+        mnozstvi = rezervace.mnozstvi
+
+        # Odeslání e-mailu
+        send_mail(
+            subject="Vaše zápůjčka byla zrušena",
+            message=(
+                f"Dobrý den {uzivatel.jmeno},\n\n"
+                f"Vaše zápůjčka předmětu \"{predmet}\" (množství: {mnozstvi}) "
+                f"k rezervaci hřiště {hriste} dne {datum.strftime('%d.%m.%Y')} byla úspěšně zrušena."
+            ),
+            from_email=None,  # použije DEFAULT_FROM_EMAIL
+            recipient_list=[uzivatel.email],
+            fail_silently=False,
+        )
+
+        rezervace.delete()
+
+        news = Novinky.objects.all().order_by('-vytvoreno')[:4]
+        context = {
+            'news': news,
+            'success': True,
+            'message': "Zápůjčka byla úspěšně zrušena a e-mail odeslán."
+        }
+
+    except Exception as e:
+        context = {
+            'error': True,
+            'message': "Došlo k chybě při odesílání e-mailu o zrušení zápůjčky."
+        }
+
+    return render(request, 'rezervace/index.html', context)
+
+
 
 def tisk_rezervace(request, rez_id):
     rezervace = get_object_or_404(Rezervace, id=rez_id)

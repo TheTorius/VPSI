@@ -147,7 +147,7 @@
                     <td>
                       <a href="{% url 'zrusit_rezervaci' rez.id %}"
                         class="btn btn-danger btn-sm"
-                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci?');">
+                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci? Budou odstraněny i její související zápujčky.');">
                         Zrušit
                       </a>
                       <a href="{% url 'tisk_rezervace' rez.id %}" target="_blank" class="btn btn-secondary btn-sm">Tisk</a>
@@ -192,9 +192,9 @@
                     <td>{{ rez.cena_za_kus}}</td>
                     <td>{{ rez.zapujcka.typ }}</td>
                     <td>
-                      <a href="{% url 'zrusit_rezervaci' rez.id %}"
+                      <a href="{% url 'zrusit_rezervaci_zapujcky' rez.id %}"
                         class="btn btn-danger btn-sm"
-                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci?');">
+                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci zapujcky?');">
                         Zrušit
                       </a>
                       <a href="{% url 'tisk_rezervace_zapujcka' rez.id %}" target="_blank" class="btn btn-secondary btn-sm">Tisk</a>
