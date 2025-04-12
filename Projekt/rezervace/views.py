@@ -10,6 +10,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from .models import Rezervace, Hriste, RezervaceZapujcky
 from django.core.mail import send_mail
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 # Create your views here.
 @login_required
@@ -64,16 +69,166 @@ def main(request):
     return render(request, 'rezervace/index.html', {'news': news})
 
 def hriste(request):
-    # Example hours and reserved times
-    hours = [f"{h:02d}:00" for h in range(8, 21)]  # 08:00 to 20:00
-    court1_reserved = ["10:00", "14:00"]  # Example reserved times for Court 1
-    court2_reserved = ["09:00", "15:00"]  # Example reserved times for Court 2
+    # Get date from query parameter; default to today
+    datum_str = request.GET.get('datum')
+    if datum_str:
+        try:
+            datum = datetime.strptime(datum_str, '%Y-%m-%d').date()
+        except ValueError:
+            datum = timezone.now().date()
+    else:
+        datum = timezone.now().date()
+
+    # Get filter for court type
+    vybrany_typ = request.GET.get('typ_hriste', '')
+
+    # Fetch active courts, optionally filtered by type
+    hriste_qs = Hriste.objects.filter(aktivni=True)
+    if vybrany_typ:
+        hriste_qs = hriste_qs.filter(typ=vybrany_typ)
+
+    # Get all court types for filter dropdown
+    hriste_typy = Hriste.objects.filter(aktivni=True).values_list('typ', flat=True).distinct()
+
+    # Generate hours as time ranges (e.g., 08:00-09:00, 09:00-10:00, ..., 20:00-21:00)
+    hours = []
+    for h in range(8, 21):  # 08:00 to 20:00
+        start_time = f"{h:02d}:00"
+        end_time = f"{(h + 1):02d}:00"
+        hours.append({'start': start_time, 'end': end_time})
+
+    # Fetch reservations for the selected date
+    reservations = Rezervace.objects.filter(datum=datum)
+
+    # Prepare reserved times for each court
+    courts_data = []
+    for hriste in hriste_qs:
+        # Get reserved hours for this court (based on start time)
+        reserved_hours = []
+        for res in reservations.filter(hriste=hriste):
+            # Extract start hour from cas_zacatku (e.g., "08:00")
+            hour = res.cas_zacatku.strftime('%H:%M')
+            # Check if hour matches any start time in hours
+            if any(h['start'] == hour for h in hours):
+                reserved_hours.append(hour)
+        courts_data.append({
+            'id': hriste.id,
+            'nazev': hriste.nazev,
+            'reserved_hours': reserved_hours,
+        })
+
     context = {
-        "hours": hours,
-        "court1_reserved": court1_reserved,
-        "court2_reserved": court2_reserved,
+        'hours': hours,  # Now a list of {'start': 'HH:MM', 'end': 'HH:MM'}
+        'courts_data': courts_data,
+        'hriste_typy': hriste_typy,
+        'vybrane_datum': datum.strftime('%Y-%m-%d'),
+        'vybrany_typ': vybrany_typ,
     }
-    return render(request, "rezervace/hriste.html", context)
+    return render(request, 'rezervace/hriste.html', context)
+
+@csrf_exempt  # Remove if CSRF token is properly included
+@login_required
+def reserve_multiple(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            reservations = data.get('reservations', [])
+            datum_str = data.get('datum')
+
+            # Validate datum
+            try:
+                datum = datetime.strptime(datum_str, '%Y-%m-%d').date()
+            except ValueError:
+                return JsonResponse({'success': False, 'message': 'Neplatný formát data.'})
+
+            # Get Uzivatele instance
+            try:
+                uzivatel = request.user.uzivatele
+            except AttributeError:
+                return JsonResponse({'success': False, 'message': 'Uživatelský profil nenalezen.'})
+
+            created_reservations = []
+
+            for res in reservations:
+                court_id = int(res['court'])
+                hour = res['hour']  # e.g., "08:00"
+
+                # Get Hriste instance
+                try:
+                    hriste = Hriste.objects.get(id=court_id, aktivni=True)
+                except Hriste.DoesNotExist:
+                    return JsonResponse({'success': False, 'message': f'Hřiště {court_id} neexistuje.'})
+
+                # Parse start time
+                try:
+                    cas_zacatku = datetime.strptime(hour, '%H:%M').time()
+                except ValueError:
+                    return JsonResponse({'success': False, 'message': f'Neplatný čas: {hour}.'})
+
+                # Calculate end time (1-hour slot)
+                cas_zacatku_dt = datetime.combine(datum, cas_zacatku)
+                cas_konce_dt = cas_zacatku_dt + timedelta(hours=1)
+                cas_konce = cas_konce_dt.time()
+
+                # Check for overlapping reservations
+                if Rezervace.objects.filter(
+                    hriste=hriste,
+                    datum=datum,
+                    cas_zacatku__lte=cas_konce,
+                    cas_konce__gte=cas_zacatku
+                ).exists():
+                    return JsonResponse({
+                        'success': False,
+                        'message': f'Hřiště {hriste.nazev} v čase {hour} je již obsazeno.'
+                    })
+
+                # Create reservation
+                rezervace = Rezervace(
+                    uzivatel=uzivatel,
+                    hriste=hriste,
+                    datum=datum,
+                    cas_zacatku=cas_zacatku,
+                    cas_konce=cas_konce,
+                    stav='nova',
+                    popis='',
+                    cena=float(hriste.cena_hodina),  # Use cena_hodina from Hriste
+                    vytvoreno=timezone.now(),
+                )
+                created_reservations.append(rezervace)
+
+            uzivatel=request.user.uzivatele
+
+            textmassage =f"Dobrý den {uzivatel.jmeno},\n\n"
+
+            for res in reservations:
+                hour = res['hour']
+
+                cas_zacatku = datetime.strptime(hour, '%H:%M').time()
+
+                cas_zacatku_dt = datetime.combine(datum, cas_zacatku)
+                cas_konce_dt = cas_zacatku_dt + timedelta(hours=1)
+                cas_konce = cas_konce_dt.time()
+                textmassage.__add__(f"Vaše rezervace na {hriste} dne {datum.strftime('%d.%m.%Y')} na hodinu od {cas_zacatku} do {cas_konce} byla úspěšně vytvořená")
+
+            send_mail(
+                subject="Vaše rezervace byly vytvořeny",
+                message=textmassage,
+                from_email=None,  # použije DEFAULT_FROM_EMAIL
+                recipient_list=[uzivatel.email],
+                fail_silently=False,
+            )
+
+            # Save reservations
+            for rezervace in created_reservations:
+                rezervace.save()
+
+            
+            return JsonResponse({'success': True, 'message': 'Rezervace úspěšně vytvořeny.'})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Chyba: {str(e)}'})
+    
+    return JsonResponse({'success': False, 'message': 'Neplatná metoda požadavku.'})
 
 def reserve_hour(request, court, hour):
     # Logic to save the reservation (e.g., to a database)

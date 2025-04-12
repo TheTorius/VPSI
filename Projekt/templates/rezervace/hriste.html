@@ -26,11 +26,48 @@
       left: 0;
       z-index: -1; 
     }
+
+    .reservation-slot {
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .reservation-slot.reserved {
+      background-color: #dc3545; /* Red for reserved */
+      color: white;
+      cursor: not-allowed;
+    }
+    
+    .reservation-slot.free {
+      background-color: #28a745; /* Green for free */
+      color: white;
+    }
+    
+    .reservation-slot.selected {
+      background-color: #ffc107; /* Yellow for selected */
+      color: black;
+    }
+    
+    .reservation-slot.free:hover:not(.selected) {
+      background-color: #218838; /* Darker green on hover */
+    }
+    
+    #submit-reservations:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body style="background-color: #0D4715;">
+  {% if error %}
+      <script>
+          alert("{{ message }}");
+          window.location.href = '/index';
+      </script>
+  {% endif %}
 
   <div id="particles-js"></div>
+
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -59,6 +96,7 @@
                 {% if user.is_authenticated %}
                     <span class="me-2">Signed as: {{ user.uzivatele.jmeno }}</span>
                     <a href="{% url 'logout' %}" class="btn btn-outline-danger me-2">Logout</a>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-primary me-2">Nastavení</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
                     <a href="{% url 'signup' %}" class="btn btn-primary">Sign up</a>
@@ -89,7 +127,7 @@
           <form method="GET" class="row g-3">
             <div class="col-auto">
               <label for="datum" class="form-label">Datum</label>
-              <input type="date" name="datum" id="datum" value="{{ vybrane_datum }}" class="form-control" />
+              <input type="date" name="datum" id="datum" value="{{ vybrane_datum|date:'Y-m-d' }}" class="form-control" />
             </div>
             <div class="col-auto">
               <label for="typ_hriste" class="form-label">Typ hřiště</label>
@@ -114,42 +152,46 @@
             <div class="col-sm-12">
               <h3>Vyberte čas rezervace</h3>
               <div class="table-responsive">
-                <table class="table table-bordered table-hover text-center">
+                <table class="table table-bordered text-center" id="reservation-table">
                   <thead class="table-light">
                     <tr>
                       <th scope="col">Hřiště</th>
                       {% for hour in hours %}
-                        <th scope="col">{{ hour }}</th>
+                        <th scope="col">{{ hour.start }} - {{ hour.end }}</th>
                       {% endfor %}
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th scope="row">Hřiště 1</th>
-                      {% for hour in hours %}
-                        <td>
-                          {% if hour in court1_reserved %}
-                            <span class="badge bg-danger">Obsazeno</span>
-                          {% else %}
-                            <a href="{% url 'reserve' court=1 hour=hour %}" class="btn btn-sm btn-success">Rezervovat</a>
-                          {% endif %}
+                    {% for court in courts_data %}
+                      <tr>
+                        <th scope="row">{{ court.nazev }}</th>
+                        {% for hour in hours %}
+                          <td
+                            class="reservation-slot {% if hour.start in court.reserved_hours %}reserved{% else %}free{% endif %}"
+                            data-court="{{ court.id }}"
+                            data-hour="{{ hour.start }}"
+                            {% if hour.start in court.reserved_hours %}data-reserved="true"{% endif %}
+                          >
+                            {% if hour.start in court.reserved_hours %}
+                              Obsazeno
+                            {% else %}
+                              Volné
+                            {% endif %}
+                          </td>
+                        {% endfor %}
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="{{ hours|length|add:1 }}" class="text-center">
+                          Žádná hřiště nenalezena.
                         </td>
-                      {% endfor %}
-                    </tr>
-                    <tr>
-                      <th scope="row">Hřiště 2</th>
-                      {% for hour in hours %}
-                        <td>
-                          {% if hour in court2_reserved %}
-                            <span class="badge bg-danger">Obsazeno</span>
-                          {% else %}
-                            <a href="{% url 'reserve' court=2 hour=hour %}" class="btn btn-sm btn-success">Rezervovat</a>
-                          {% endif %}
-                        </td>
-                      {% endfor %}
-                    </tr>
+                      </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
+                <div class="text-center mt-3">
+                  <button type="button" class="btn btn-primary" id="submit-reservations" disabled>Rezervovat vybrané časy</button>
+                </div>
               </div>
             </div>
           </div>
@@ -212,6 +254,77 @@
         }
       },
       "retina_detect": true
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const slots = document.querySelectorAll('.reservation-slot');
+      const submitButton = document.getElementById('submit-reservations');
+      let selectedSlots = [];
+  
+      // Handle slot clicks
+      slots.forEach(slot => {
+        slot.addEventListener('click', function () {
+          if (slot.classList.contains('reserved')) {
+            return; // Ignore reserved slots
+          }
+  
+          const court = slot.getAttribute('data-court');
+          const hour = slot.getAttribute('data-hour');
+  
+          if (slot.classList.contains('selected')) {
+            // Deselect slot
+            slot.classList.remove('selected');
+            selectedSlots = selectedSlots.filter(
+              s => !(s.court === court && s.hour === hour)
+            );
+          } else {
+            // Select slot
+            slot.classList.add('selected');
+            selectedSlots.push({ court, hour });
+          }
+  
+          // Enable/disable submit button
+          submitButton.disabled = selectedSlots.length === 0;
+        });
+      });
+  
+      // Handle submit button click
+      submitButton.addEventListener('click', function () {
+        if (selectedSlots.length === 0) {
+          alert('Prosím, vyberte alespoň jeden čas.');
+          return;
+        }
+  
+        // Prepare data for submission
+        const reservations = selectedSlots.map(slot => ({
+          court: slot.court,
+          hour: slot.hour,
+        }));
+  
+        // Send data to server
+        fetch('/reserve_multiple/', {  // Adjust URL if needed
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}',
+          },
+          body: JSON.stringify({ reservations, datum: '{{ vybrane_datum }}' }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert('Rezervace byly úspěšně vytvořeny!');
+              window.location.reload(); // Reload to update table
+            } else {
+              alert('Chyba při vytváření rezervací: ' + data.message);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Došlo k chybě při odesílání rezervací.');
+          });
+      });
     });
   </script>
 </body>
