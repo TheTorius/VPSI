@@ -151,6 +151,7 @@
                         Zrušit
                       </a>
                       <a href="{% url 'tisk_rezervace' rez.id %}" target="_blank" class="btn btn-secondary btn-sm">Tisk</a>
+                        <a href="{% url 'zapujcky_k_rezervaci' rez.id %}" class="btn btn-success btn-sm">Zápůjčky</a>
                     </td>
                   </tr>
                   {% endfor %}

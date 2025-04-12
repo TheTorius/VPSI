@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Možnosti zápůjčení{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <!-- Nadpis -->
+  <div class="card text-center mb-5 p-4" style="background-color: rgba(255, 255, 255, 0.2); border: none;">
+    <h2 class="text-white">Možnosti zápůjčení</h2>
+    <p class="text-light">
+      Vyberte si předmět a množství k rezervaci:
+      <strong>{{ rezervace.hriste.nazev }}</strong> dne
+      <strong>{{ rezervace.datum|date:"d.m.Y" }}</strong>
+      (<strong>{{ rezervace.cas_zacatku|time:"H:i" }} - {{ rezervace.cas_konce|time:"H:i" }}</strong>)
+    </p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Formulář vlevo -->
+    <div class="col-lg-4">
+      <div class="card p-4 card-zoom" style="background-color: rgba(255,255,255,0.85);">
+        <h5 class="mb-3 text-dark">Přidat zápůjčku</h5>
+        <form method="POST">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="predmet" class="form-label text-dark">Předmět</label>
+            <select name="predmet" id="predmet" class="form-select" required>
+              <option value="" disabled selected>Vyberte předmět</option>
+              {% for item in predmety %}
+                <option value="{{ item.id }}">{{ item.nazev }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="mnozstvi" class="form-label text-dark">Množství</label>
+            <input type="number" name="mnozstvi" id="mnozstvi" class="form-control" min="1" value="1" required>
+          </div>
+
+          <button type="submit" class="btn btn-dark w-100">Přidat</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Pravý blok: Ceníky + Košík -->
+    <div class="col-lg-8">
+      <div class="row g-3">
+        <!-- Ceník půjček -->
+        <div class="col-md-6">
+          <div class="card p-4 card-zoom" style="background-color: rgba(255,255,255,0.9);">
+            <h5 class="text-dark mb-3">Ceník zápůjček</h5>
+            {% if cenik_zapujcek %}
+              <ul class="list-group list-group-flush">
+                {% for z in cenik_zapujcek %}
+                  <li class="list-group-item d-flex justify-content-between">
+                    {{ z.nazev }}
+                    <span>{{ z.cena_pujceni }} Kč</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted">Žádné položky k zapůjčení.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Ceník prodeje -->
+        <div class="col-md-6">
+          <div class="card p-4 card-zoom" style="background-color: rgba(255,255,255,0.9);">
+            <h5 class="text-dark mb-3">Zakoupení na místě</h5>
+            {% if cenik_prodeje %}
+              <ul class="list-group list-group-flush">
+                {% for z in cenik_prodeje %}
+                  <li class="list-group-item d-flex justify-content-between">
+                    {{ z.nazev }}
+                    <span>{{ z.cena_prodeje }} Kč</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted">Žádné položky k prodeji.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Košík -->
+        <div class="col-12">
+          <div class="card p-4 card-zoom" style="background-color: rgba(255,255,255,0.9);">
+            <h5 class="text-dark mb-3">Vybrané zápůjčky</h5>
+            {% if cart_items %}
+              <div class="row g-3">
+                {% for item in cart_items %}
+                  <div class="col-md-6">
+                    <div class="border p-3 rounded bg-light position-relative">
+                      <strong>{{ item.nazev }}</strong><br>
+                      Množství: {{ item.mnozstvi }}<br>
+                      Typ: {{ item.typ }}<br>
+                      Cena za kus: {{ item.cena }} Kč
+                      <form method="POST" class="mt-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="odebrat" value="{{ item.id }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Odebrat</button>
+                      </form>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+              <form method="POST" class="mt-4">
+                {% csrf_token %}
+                <button type="submit" name="rezervovat" class="btn btn-success w-100">Rezervovat vše</button>
+              </form>
+            {% else %}
+              <p class="text-muted">Košík je prázdný.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

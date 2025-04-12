@@ -4,7 +4,7 @@ from .forms import RegistrationForm,LoginForm,SignUpForm,UserUpdateForm
 from django.contrib.auth import login,authenticate,logout,update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .models import Uzivatele, TypZakaznika, Novinky
+from .models import Uzivatele, TypZakaznika, Novinky, Zapujcky
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -329,6 +329,92 @@ def zrusit_rezervaci_zapujcky(request, rez_id):
         }
 
     return render(request, 'rezervace/index.html', context)
+
+
+@login_required
+def zapujcky_k_rezervaci(request, rez_id):
+    rezervace = get_object_or_404(Rezervace, id=rez_id, uzivatel=request.user.uzivatele)
+    predmety = Zapujcky.objects.filter(aktivni=True)
+    pujcovna = predmety.filter(typ__in=['pujcka', 'oboji'])
+    prodej = predmety.filter(typ__in=['prodej', 'oboji'])
+
+    session_cart = request.session.get('zapujcky_cart', {})
+    cart = session_cart.get(str(rez_id), [])
+
+    if request.method == 'POST':
+        if 'rezervovat' in request.POST:
+            for polozka in cart:
+                zapujcka = get_object_or_404(Zapujcky, id=polozka['predmet_id'])
+                cena = zapujcka.cena_pujceni if zapujcka.typ != 'prodej' else zapujcka.cena_prodeje
+
+                # Zkontroluj, jestli záznam už existuje
+                existing = RezervaceZapujcky.objects.filter(rezervace=rezervace, zapujcka=zapujcka).first()
+                if existing:
+                    existing.mnozstvi += polozka['mnozstvi']
+                    existing.save()
+                else:
+                    RezervaceZapujcky.objects.create(
+                        rezervace=rezervace,
+                        zapujcka=zapujcka,
+                        mnozstvi=polozka['mnozstvi'],
+                        cena_za_kus=cena
+                    )
+
+            # Vyčištění košíku
+            session_cart[str(rez_id)] = []
+            request.session['zapujcky_cart'] = session_cart
+
+            return redirect('rezervace')
+
+        elif 'odebrat' in request.POST:
+            odebrat_id = int(request.POST.get('odebrat'))
+            cart = [item for item in cart if item['predmet_id'] != odebrat_id]
+            session_cart[str(rez_id)] = cart
+            request.session['zapujcky_cart'] = session_cart
+            return redirect('zapujcky_k_rezervaci', rez_id=rez_id)
+
+        else:
+            predmet_id = int(request.POST.get('predmet'))
+            mnozstvi = int(request.POST.get('mnozstvi', 1))
+
+            if str(rez_id) not in session_cart:
+                session_cart[str(rez_id)] = []
+
+            found = False
+            for item in session_cart[str(rez_id)]:
+                if item['predmet_id'] == predmet_id:
+                    item['mnozstvi'] += mnozstvi
+                    found = True
+                    break
+
+            if not found:
+                session_cart[str(rez_id)].append({
+                    'predmet_id': predmet_id,
+                    'mnozstvi': mnozstvi
+                })
+
+            request.session['zapujcky_cart'] = session_cart
+            return redirect('zapujcky_k_rezervaci', rez_id=rez_id)
+
+    # Kontext pro šablonu
+    cart_items = []
+    for polozka in cart:
+        zapujcka = get_object_or_404(Zapujcky, id=polozka['predmet_id'])
+        cart_items.append({
+            'id': zapujcka.id,
+            'nazev': zapujcka.nazev,
+            'mnozstvi': polozka['mnozstvi'],
+            'typ': zapujcka.typ,
+            'cena': zapujcka.cena_pujceni if zapujcka.typ != 'prodej' else zapujcka.cena_prodeje
+        })
+
+    return render(request, 'rezervace/zapujcky_k_rezervaci.html', {
+        'rezervace': rezervace,
+        'predmety': predmety,
+        'cenik_zapujcek': pujcovna,
+        'cenik_prodeje': prodej,
+        'cart_items': cart_items
+    })
 
 
 

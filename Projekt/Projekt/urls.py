@@ -34,6 +34,7 @@ urlpatterns = [
     path('hriste/', views.hriste, name='hriste'),
     path('reserve_multiple/', views.reserve_multiple, name='reserve_multiple'),
     path('rezervace/', views.rezervace, name='rezervace'),
+    path('rezervace/<int:rez_id>/zapujcky/', views.zapujcky_k_rezervaci, name='zapujcky_k_rezervaci'),
     path('rezervace/zrusit/<int:rez_id>/', views.zrusit_rezervaci, name='zrusit_rezervaci'),
     path('rezervace/tisk/<int:rez_id>/', views.tisk_rezervace, name='tisk_rezervace'),
     path('zrusit-rezervaci-zapujcky/<int:rez_id>/', views.zrusit_rezervaci_zapujcky, name='zrusit_rezervaci_zapujcky'),
