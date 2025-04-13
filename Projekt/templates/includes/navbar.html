@@ -1,7 +1,7 @@
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'index' %}">LOGO</a>
+    <div class="container px-5">
+        <a class="navbar-brand" href="{% url 'index' %}">SPORTIFY</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -9,23 +9,30 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}"><i class="fas fa-newspaper me-1"></i>Novinky</a>
+                    <a class="nav-link" href="{% url 'hriste' %}">Rezervace</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hriste' %}"><i class="fas fa-futbol me-1"></i>Hřiště</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'rezervace' %}"><i class="fas fa-calendar-alt me-1"></i>Moje rezervace</a>
+                    <a class="nav-link" href="{% url 'novinky' %}">Novinky</a>
                 </li>
             </ul>
             <div class="d-flex align-items-center">
                 {% if user.is_authenticated %}
-                    <span class="me-2"><i class="fas fa-user me-1"></i>Signed as: {{ user.uzivatele.jmeno }}</span>
-                    <a href="{% url 'logout' %}" class="btn btn-outline-danger me-2"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
-                    <a href="{% url 'profile' %}" class="btn btn-outline-primary me-2"><i class="fas fa-cog me-1"></i>Nastavení</a>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle d-flex align-items-center text-decoration-none" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="me-2">{{ user.uzivatele.jmeno }}</span>
+                            <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width: 38px; height: 38px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{% url 'rezervace' %}"><i class="fas fa-calendar-alt me-1"></i>Moje rezervace</a></li>
+                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-cog me-1"></i>Nastavení</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-1"></i>Logout</a></li>
+                        </ul>
+                    </div>
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline-primary me-2"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
-                    <a href="{% url 'signup' %}" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i>Sign up</a>
+                    <a href="{% url 'login' %}" class="btn btn-primary"><i class="fas fa-sign-in-alt me-1"></i>Sign in</a>
                 {% endif %}
             </div>
         </div>

@@ -43,5 +43,6 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('login/',views.login_view, name='login'),
     path("reserve/<int:court>/<str:hour>/", views.reserve_hour, name="reserve"),
-    path("profile/",views.profile_view,name='profile')
+    path("profile/",views.profile_view,name='profile'),
+    path('novinky/', views.novinky, name='novinky'),
 ]

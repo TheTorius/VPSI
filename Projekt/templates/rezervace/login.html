@@ -1,28 +1,33 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Sign in{% endblock %}
 
 {% block content %}
 <!-- Login Form -->
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
-            <h2 class="text-center mb-4"><i class="fas fa-user-circle mb-3"></i><br>Login</h2>
-            <!-- Display messages -->
-            {% if messages %}
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    {% for message in messages %}
-                        {{ message }}
-                    {% endfor %}
+            <div class="card" style="padding: 20px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
+                <h2 class="text-center mb-4"><i class="fas fa-user-circle mb-3"></i><br>Sign in</h2>
+                <!-- Display messages -->
+                {% if messages %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-dark w-100"><i class="fas fa-sign-in-alt me-2"></i>Sign in</button>
+                </form>
+                <div class="text-center mt-4">
+                    <p>Don't have an account? <a href="{% url 'signup' %}" class="text-primary">Sign up</a></p>
                 </div>
-            {% endif %}
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-dark w-100"><i class="fas fa-sign-in-alt me-2"></i>Login</button>
-            </form>
+            </div>
         </div>
     </div>
 </div>

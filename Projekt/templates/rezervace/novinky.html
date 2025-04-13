@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Novinky{% endblock %}
+
+{% block content %}
+    <div class="row">
+      {% if messages %}
+          <div class="alert alert-info">
+              {% for message in messages %}
+                  {{ message }}
+              {% endfor %}
+          </div>
+      {% endif %}
+    </div>
+
+    <!-- Main Container -->
+    <div class="container my-5">
+        <div class="row mb-5">
+            <div class="col-12 text-center mb-4">
+                <h1 class="display-4 fw-bold" style="color: #343a40; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">Aktuality</h1>
+                <div class="mx-auto" style="width: 100px; height: 4px; background: linear-gradient(to right, #007bff, #6610f2);"></div>
+            </div>
+        </div>
+
+        <!-- News Articles -->
+        <div class="row">
+            {% if news %}
+                {% for article in news %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-lg hover-card" 
+                         style="border-radius: 15px; background: rgba(255, 255, 255, 0.7); overflow: hidden; transition: all 0.3s ease;">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-gradient text-white d-flex justify-content-center align-items-center me-4 shadow" 
+                                     style="width: 64px; height: 64px; min-width: 64px; background: linear-gradient(45deg, #007bff, #6610f2);">
+                                    <i class="far fa-newspaper fs-3"></i>
+                                </div>
+                                <div>
+                                    <h3 class="card-title fw-bold mb-1" style="color: #343a40;">{{ article.titulek }}</h3>
+                                    <small class="text-muted d-block">
+                                        <i class="far fa-clock me-1"></i> {{ article.vytvoreno|date:"d. m. Y H:i" }}
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <p class="card-text fs-5 mt-3" style="color: #495057; line-height: 1.6;">
+                                {{ article.text }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p class="fs-5">Žádné aktuality nejsou k dispozici.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Add custom CSS for hover effects -->
+    <style>
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+{% endblock %} 

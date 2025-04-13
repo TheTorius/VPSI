@@ -16,116 +16,174 @@
 
     <!-- Main Container -->
     <div class="container my-5">
-
-        <!-- =================== -->
-        <!-- BEGIN CENÍK SECTION -->
-        <!-- =================== -->
-        <div class="row">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6">
-                <div class="card"
-                     style="padding-top: 15px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-                    <h6 class="text-center mb-4" style="padding-top: 15px;"><i class="fas fa-calendar-check"></i> Objednání hřiště</h6>
-                    <h1 class="text-center mb-4"><i class="fas fa-money-bill-wave"></i> Ceník na hodinu</h1>
-                </div>
-            </div>
-            <div class="col-sm-3"></div>
-        </div>
-
+        
         <div class="row" style="padding-top: 25px;">
             <!-- Tennis Court -->
-            <div class="col-md-4 mb-4">
-                <div class="card card-zoom"
-                     style="padding-top: 15px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-                    <div>
-                        <h3 class="text-center mb-4"><i class="fas fa-tennis-ball"></i> Tenisový kurt</h3>
-                        <div class="text-center mb-4 price"><i class="fas fa-tag"></i> 400 Kč/hodina</div>
-                        <ul>
-                          <li><i class="fas fa-layer-group"></i> Povrch: antuka</li>
-                          <li><i class="fas fa-moon"></i> Venkovní kurt s večerním osvětlením</li>
-                          <li><i class="fas fa-shopping-cart"></i> Možnost zakoupení tenisových míčků</li>
-                          <li><i class="fas fa-shower"></i> Sprchy a šatny k dispozici</li>
-                        </ul>
-                        <div class="text-center mb-4">
-                            <a href="{% url 'hriste' %}" class="btn btn-dark btn-color"><i class="fas fa-calendar-plus"></i> Rezervovat</a>
+            <div class="col-md-4 mb-5">
+                <div class="card card-zoom h-100 border-0 shadow-lg"
+                     style="padding-top: 15px; border-radius: 15px; background: rgba(255, 255, 255, 0.7); transform: translateY(0); transition: all 0.3s ease;">
+                    <div class="position-absolute top-0 start-50 translate-middle">
+                        <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center shadow-lg" 
+                             style="width: 80px; height: 80px; z-index: 1;">
+                            <i class="fas fa-baseball-ball text-white" style="font-size: 2.5rem;"></i>
                         </div>
+                    </div>
+                    <div class="d-flex flex-column h-100" style="margin-top: 50px;">
+                        <h2 class="text-center mb-3 fw-bold">Tenisový kurt</h2>
+                        <div class="text-center mb-4 price fw-bold" style="font-size: 1.8rem; color: #007bff;">400 Kč<span style="font-size: 1rem;">/hodina</span></div>
+                        <ul class="fs-5 mb-auto list-unstyled px-4">
+                          <li class="mb-3 d-flex">
+                            <div class="text-center" style="width: 35px;"><i class="fas fa-layer-group text-primary"></i></div>
+                            <span>Povrch: antuka</span>
+                          </li>
+                          <li class="mb-3 d-flex">
+                            <div class="text-center" style="width: 35px;"><i class="fas fa-moon text-primary"></i></div>
+                            <span>Venkovní kurt s večerním osvětlením</span>
+                          </li>
+                          <li class="mb-3 d-flex">
+                            <div class="text-center" style="width: 35px;"><i class="fas fa-shopping-cart text-primary"></i></div>
+                            <span>Možnost zakoupení tenisových míčků</span>
+                          </li>
+                          <li class="mb-3 d-flex">
+                            <div class="text-center" style="width: 35px;"><i class="fas fa-shower text-primary"></i></div>
+                            <span>Sprchy a šatny k dispozici</span>
+                          </li>
+                        </ul>
+                        <a href="{% url 'hriste' %}" class="btn btn-primary btn-lg w-100 py-3 rounded-bottom mt-4" style="border-top-left-radius: 0; border-top-right-radius: 0; font-size: 1.25rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><i class="fas fa-calendar-plus me-2"></i>Rezervovat</a>
                     </div>
                 </div>
             </div>
 
             <!-- Badminton Court -->
-            <div class="col-md-4 mb-4">
-                <div class="card card-zoom"
-                     style="padding-top: 15px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-                    <div>
-                        <h3 class="text-center mb-4"><i class="fas fa-table-tennis"></i> Badmintonový kurt</h3>
-                        <div class="text-center mb-4 price"><i class="fas fa-tag"></i> 200 Kč/hodina</div>
-                        <ul>
-                          <li><i class="fas fa-building"></i> 4 vnitřní kurty s profesionálním povrchem</li>
-                          <li><i class="fas fa-wind"></i> Klimatizovaná hala</li>
-                          <li><i class="fas fa-hand-holding"></i> Možnost zapůjčení raket a míčků</li>
-                          <li><i class="fas fa-exchange-alt"></i> Kurty mohou být dočasně využity pro ping pong</li>
-                        </ul>
-                        <div class="text-center mb-4">
-                            <a href="{% url 'hriste' %}" class="btn btn-dark btn-color"><i class="fas fa-calendar-plus"></i> Rezervovat</a>
+            <div class="col-md-4 mb-5">
+                <div class="card card-zoom h-100 border-0 shadow-lg"
+                     style="padding-top: 15px; border-radius: 15px; background: rgba(255, 255, 255, 0.7); transform: translateY(0); transition: all 0.3s ease;">
+                    <div class="position-absolute top-0 start-50 translate-middle">
+                        <div class="rounded-circle bg-success d-flex justify-content-center align-items-center shadow-lg" 
+                             style="width: 80px; height: 80px; z-index: 1;">
+                            <i class="fas fa-table-tennis text-white" style="font-size: 2.5rem;"></i>
                         </div>
+                    </div>
+                    <div class="d-flex flex-column h-100" style="margin-top: 50px;">
+                        <h2 class="text-center mb-3 fw-bold">Badmintonový kurt</h2>
+                        <div class="text-center mb-4 price fw-bold" style="font-size: 1.8rem; color: #28a745;">200 Kč<span style="font-size: 1rem;">/hodina</span></div>
+                        <ul class="fs-5 mb-auto list-unstyled px-4">
+                          <li class="mb-3 d-flex">
+                            <div class="text-center" style="width: 35px;"><i class="fas fa-building text-success"></i></div>
+                            <span>4 vnitřní kurty s profesionálním povrchem</span>
+                          </li>
+                          <li class="mb-3 d-flex">
+                            <div class="text-center" style="width: 35px;"><i class="fas fa-wind text-success"></i></div>
+                            <span>Klimatizovaná hala</span>
+                          </li>
+                          <li class="mb-3 d-flex">
+                            <div class="text-center" style="width: 35px;"><i class="fas fa-hand-holding text-success"></i></div>
+                            <span>Možnost zapůjčení raket a míčků</span>
+                          </li>
+                          <li class="mb-3 d-flex">
+                            <div class="text-center" style="width: 35px;"><i class="fas fa-exchange-alt text-success"></i></div>
+                            <span>Kurty mohou být dočasně využity pro ping pong</span>
+                          </li>
+                        </ul>
+                        <a href="{% url 'hriste' %}" class="btn btn-success btn-lg w-100 py-3 rounded-bottom mt-4" style="border-top-left-radius: 0; border-top-right-radius: 0; font-size: 1.25rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><i class="fas fa-calendar-plus me-2"></i>Rezervovat</a>
                     </div>
                 </div>
             </div>
 
             <!-- Ping Pong Table -->
-            <div class="col-md-4 mb-4">
-                <div class="card card-zoom"
-                     style="padding-top: 15px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-                    <div>
-                        <h3 class="text-center mb-4"><i class="fas fa-table-tennis"></i> Ping pongový stůl</h3>
-                        <div class="text-center mb-4 price"><i class="fas fa-tag"></i> 200 Kč/hodina</div>
-                        <ul>
-                            <li><i class="fas fa-table"></i> 2 stoly dostupné na badmintonových kurtech</li>
-                            <li><i class="fas fa-expand"></i> Stůl zabírá jeden celý badmintonový kurt</li>
-                            <li><i class="fas fa-running"></i> Vhodné pro rekreační hru</li>
-                            <li><i class="fas fa-hand-holding"></i> Možnost zapůjčení pálek a míčků</li>
-                        </ul>
-                        <div class="text-center mb-4">
-                            <a href="{% url 'hriste' %}" class="btn btn-dark btn-color"><i class="fas fa-calendar-plus"></i> Rezervovat</a>
+            <div class="col-md-4 mb-5">
+                <div class="card card-zoom h-100 border-0 shadow-lg"
+                     style="padding-top: 15px; border-radius: 15px; background: rgba(255, 255, 255, 0.7); transform: translateY(0); transition: all 0.3s ease;">
+                    <div class="position-absolute top-0 start-50 translate-middle">
+                        <div class="rounded-circle bg-danger d-flex justify-content-center align-items-center shadow-lg" 
+                             style="width: 80px; height: 80px; z-index: 1;">
+                            <i class="fas fa-table-tennis text-white" style="font-size: 2.5rem;"></i>
                         </div>
+                    </div>
+                    <div class="d-flex flex-column h-100" style="margin-top: 50px;">
+                        <h2 class="text-center mb-3 fw-bold">Ping pongový stůl</h2>
+                        <div class="text-center mb-4 price fw-bold" style="font-size: 1.8rem; color: #dc3545;">200 Kč<span style="font-size: 1rem;">/hodina</span></div>
+                        <ul class="fs-5 mb-auto list-unstyled px-4">
+                            <li class="mb-3 d-flex">
+                              <div class="text-center" style="width: 35px;"><i class="fas fa-table text-danger"></i></div>
+                              <span>2 stoly dostupné na badmintonových kurtech</span>
+                            </li>
+                            <li class="mb-3 d-flex">
+                              <div class="text-center" style="width: 35px;"><i class="fas fa-expand text-danger"></i></div>
+                              <span>Stůl zabírá jeden celý badmintonový kurt</span>
+                            </li>
+                            <li class="mb-3 d-flex">
+                              <div class="text-center" style="width: 35px;"><i class="fas fa-running text-danger"></i></div>
+                              <span>Vhodné pro rekreační hru</span>
+                            </li>
+                            <li class="mb-3 d-flex">
+                              <div class="text-center" style="width: 35px;"><i class="fas fa-hand-holding text-danger"></i></div>
+                              <span>Možnost zapůjčení pálek a míčků</span>
+                            </li>
+                        </ul>
+                        <a href="{% url 'hriste' %}" class="btn btn-danger btn-lg w-100 py-3 rounded-bottom mt-4" style="border-top-left-radius: 0; border-top-right-radius: 0; font-size: 1.25rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><i class="fas fa-calendar-plus me-2"></i>Rezervovat</a>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- ================= -->
-        <!-- END CENÍK SECTION -->
-        <!-- ================= -->
 
-        <!-- ===================== -->
-        <!-- BEGIN NEWS SECTION    -->
-        <!-- ===================== -->
-        <div class="row" style="padding-top: 35px;">
-            <div class="card"
-                 style="padding: 20px; border-width: 4px; border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-                <div class="row row-cols-1 row-cols-md-2 g-4">
-                    {% for article in news %}
-                    <div class="col">
-                        <div class="card h-100 shadow-sm card-zoom" style="background: rgba(255, 255, 255, 0.3)">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <i class="far fa-newspaper"></i> {{ article.titulek }}
-                                </h5>
-                                <p class="card-text">
-                                    {{ article.text|truncatewords:20 }}
-                                </p>
+        <!-- News Section - Latest Article Only -->
+        <div class="row mt-5">
+            {% if news %}
+                {% with latest_news=news.0 %}
+                <div class="col-12 mb-5">
+                    <div class="card h-100 border-0 shadow-lg hover-card" 
+                         style="border-radius: 15px; background: rgba(255, 255, 255, 0.7); overflow: hidden; transition: all 0.3s ease;">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-gradient text-white d-flex justify-content-center align-items-center me-3 shadow" 
+                                     style="width: 50px; height: 50px; min-width: 50px; background: linear-gradient(45deg, #007bff, #6610f2);">
+                                    <i class="far fa-newspaper"></i>
+                                </div>
+                                <h3 class="card-title fw-bold mb-0" style="color: #343a40; font-size: 1.4rem;">{{ latest_news.titulek }}</h3>
+                            </div>
+                            
+                            <p class="card-text mt-3" style="color: #495057; line-height: 1.6;">
+                                {{ latest_news.text|truncatewords:50 }}
+                            </p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-4">
                                 <small class="text-muted">
-                                    <i class="far fa-clock"></i> Publikováno: {{ article.vytvoreno|date:"d. m. Y H:i" }}
+                                    <i class="far fa-clock me-1"></i> {{ latest_news.vytvoreno|date:"d. m. Y" }}
                                 </small>
+                                
+                                <a href="{% url 'novinky' %}" class="btn btn-primary rounded-pill px-4 py-2">
+                                    <i class="fas fa-newspaper me-2"></i>Všechny novinky
+                                </a>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
-            </div>
+                {% endwith %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p class="fs-5">Žádné aktuality nejsou k dispozici.</p>
+                </div>
+            {% endif %}
         </div>
-        <!-- ===================== -->
-        <!-- END NEWS SECTION      -->
-        <!-- ===================== -->
     </div>
+
+    <!-- Add custom CSS for hover effects -->
+    <style>
+        .card.card-zoom:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 22px 43px rgba(0, 0, 0, 0.15);
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+    </style>
 {% endblock %}
