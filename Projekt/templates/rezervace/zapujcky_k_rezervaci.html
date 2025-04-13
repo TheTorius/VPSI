@@ -1,117 +1,227 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Možnosti zápůjčení{% endblock %}
 
 {% block content %}
+<style>
+  .card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  .section-header {
+    background-color: #41644A;
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  
+  .btn {
+    transition: all 0.3s ease;
+    border-radius: 50px;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .list-group-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .list-group-item:hover {
+    background-color: rgba(65, 100, 74, 0.1);
+  }
+  
+  .form-control, .form-select {
+    border-radius: 10px;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(65, 100, 74, 0.25);
+    border-color: #41644A;
+  }
+</style>
+
 <div class="container my-5">
-  <!-- Nadpis -->
-  <div class="card text-center mb-5 p-4" style="background-color: rgba(255, 255, 255, 0.2); border: none;">
-    <h2 class="text-white">Možnosti zápůjčení</h2>
-    <p class="text-light">
-      Vyberte si předmět a množství k rezervaci:
-      <strong>{{ rezervace.hriste.nazev }}</strong> dne
-      <strong>{{ rezervace.datum|date:"d.m.Y" }}</strong>
-      (<strong>{{ rezervace.cas_zacatku|time:"H:i" }} - {{ rezervace.cas_konce|time:"H:i" }}</strong>)
-    </p>
+  <!-- Fancy Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="section-header">
+        <h1 class="display-5 fw-bold mb-2"><i class="fas fa-shopping-basket me-3"></i>Možnosti zápůjčení</h1>
+        <p class="lead mb-0">
+          Vyberte si předmět a množství k rezervaci:
+          <span class="fw-bold">{{ rezervace.hriste.nazev }}</span> dne
+          <span class="fw-bold">{{ rezervace.datum|date:"d.m.Y" }}</span>
+          (<span class="fw-bold">{{ rezervace.cas_zacatku|time:"H:i" }} - {{ rezervace.cas_konce|time:"H:i" }}</span>)
+        </p>
+      </div>
+    </div>
   </div>
 
   <div class="row g-4">
     <!-- Formulář vlevo -->
     <div class="col-lg-4">
-      <div class="card p-4 card-zoom" style="background-color: rgba(255,255,255,0.85);">
-        <h5 class="mb-3 text-dark">Přidat zápůjčku</h5>
+      <div class="card p-4">
+        <h3 class="mb-4 fw-bold" style="color: #41644A;"><i class="fas fa-plus-circle me-2"></i>Přidat zápůjčku</h3>
         <form method="POST">
           {% csrf_token %}
           <div class="mb-3">
-            <label for="predmet" class="form-label text-dark">Předmět</label>
-            <select name="predmet" id="predmet" class="form-select" required>
-              <option value="" disabled selected>Vyberte předmět</option>
-              {% for item in predmety %}
-                <option value="{{ item.id }}">{{ item.nazev }}</option>
-              {% endfor %}
-            </select>
+            <label for="predmet" class="form-label fw-bold">Předmět</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-tag"></i></span>
+              <select name="predmet" id="predmet" class="form-select" required>
+                <option value="" disabled selected>Vyberte předmět</option>
+                {% for item in predmety %}
+                  <option value="{{ item.id }}">{{ item.nazev }}</option>
+                {% endfor %}
+              </select>
+            </div>
           </div>
 
           <div class="mb-3">
-            <label for="mnozstvi" class="form-label text-dark">Množství</label>
-            <input type="number" name="mnozstvi" id="mnozstvi" class="form-control" min="1" value="1" required>
+            <label for="mnozstvi" class="form-label fw-bold">Množství</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+              <input type="number" name="mnozstvi" id="mnozstvi" class="form-control" min="1" value="1" required>
+            </div>
           </div>
 
-          <button type="submit" class="btn btn-dark w-100">Přidat</button>
+          <div class="d-grid">
+            <button type="submit" class="btn py-2" style="background-color: #41644A; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+              <i class="fas fa-cart-plus me-2"></i>Přidat do košíku
+            </button>
+          </div>
         </form>
       </div>
     </div>
 
     <!-- Pravý blok: Ceníky + Košík -->
     <div class="col-lg-8">
-      <div class="row g-3">
+      <div class="row g-4">
         <!-- Ceník půjček -->
         <div class="col-md-6">
-          <div class="card p-4 card-zoom" style="background-color: rgba(255,255,255,0.9);">
-            <h5 class="text-dark mb-3">Ceník zápůjček</h5>
-            {% if cenik_zapujcek %}
-              <ul class="list-group list-group-flush">
-                {% for z in cenik_zapujcek %}
-                  <li class="list-group-item d-flex justify-content-between">
-                    {{ z.nazev }}
-                    <span>{{ z.cena_pujceni }} Kč</span>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted">Žádné položky k zapůjčení.</p>
-            {% endif %}
+          <div class="card h-100">
+            <div class="card-header py-3" style="background-color: #41644A; color: white;">
+              <h3 class="mb-0 fs-5"><i class="fas fa-tag me-2"></i>Ceník zápůjček</h3>
+            </div>
+            <div class="card-body p-0">
+              {% if cenik_zapujcek %}
+                <ul class="list-group list-group-flush">
+                  {% for z in cenik_zapujcek %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                      <span><i class="fas fa-volleyball-ball me-2 text-muted"></i>{{ z.nazev }}</span>
+                      <span class="badge bg-success rounded-pill px-3 py-2">{{ z.cena_pujceni }} Kč</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <div class="p-4 text-center">
+                  <i class="fas fa-exclamation-circle text-muted fs-3 mb-3"></i>
+                  <p class="mb-0">Žádné položky k zapůjčení.</p>
+                </div>
+              {% endif %}
+            </div>
           </div>
         </div>
 
         <!-- Ceník prodeje -->
         <div class="col-md-6">
-          <div class="card p-4 card-zoom" style="background-color: rgba(255,255,255,0.9);">
-            <h5 class="text-dark mb-3">Zakoupení na místě</h5>
-            {% if cenik_prodeje %}
-              <ul class="list-group list-group-flush">
-                {% for z in cenik_prodeje %}
-                  <li class="list-group-item d-flex justify-content-between">
-                    {{ z.nazev }}
-                    <span>{{ z.cena_prodeje }} Kč</span>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted">Žádné položky k prodeji.</p>
-            {% endif %}
+          <div class="card h-100">
+            <div class="card-header py-3" style="background-color: #41644A; color: white;">
+              <h3 class="mb-0 fs-5"><i class="fas fa-shopping-cart me-2"></i>Zakoupení na místě</h3>
+            </div>
+            <div class="card-body p-0">
+              {% if cenik_prodeje %}
+                <ul class="list-group list-group-flush">
+                  {% for z in cenik_prodeje %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                      <span><i class="fas fa-shopping-basket me-2 text-muted"></i>{{ z.nazev }}</span>
+                      <span class="badge bg-primary rounded-pill px-3 py-2">{{ z.cena_prodeje }} Kč</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <div class="p-4 text-center">
+                  <i class="fas fa-exclamation-circle text-muted fs-3 mb-3"></i>
+                  <p class="mb-0">Žádné položky k prodeji.</p>
+                </div>
+              {% endif %}
+            </div>
           </div>
         </div>
 
         <!-- Košík -->
         <div class="col-12">
-          <div class="card p-4 card-zoom" style="background-color: rgba(255,255,255,0.9);">
-            <h5 class="text-dark mb-3">Vybrané zápůjčky</h5>
-            {% if cart_items %}
-              <div class="row g-3">
-                {% for item in cart_items %}
-                  <div class="col-md-6">
-                    <div class="border p-3 rounded bg-light position-relative">
-                      <strong>{{ item.nazev }}</strong><br>
-                      Množství: {{ item.mnozstvi }}<br>
-                      Typ: {{ item.typ }}<br>
-                      Cena za kus: {{ item.cena }} Kč
-                      <form method="POST" class="mt-2">
-                        {% csrf_token %}
-                        <input type="hidden" name="odebrat" value="{{ item.id }}">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Odebrat</button>
-                      </form>
+          <div class="card">
+            <div class="card-header py-3" style="background-color: #41644A; color: white;">
+              <h3 class="mb-0 fs-5"><i class="fas fa-shopping-basket me-2"></i>Vybrané zápůjčky</h3>
+            </div>
+            <div class="card-body">
+              {% if cart_items %}
+                <div class="row g-3">
+                  {% for item in cart_items %}
+                    <div class="col-md-6">
+                      <div class="card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                          <h5 class="fw-bold mb-3">{{ item.nazev }}</h5>
+                          <span class="badge bg-info rounded-pill">{{ item.typ }}</span>
+                        </div>
+                        <div class="mb-3">
+                          <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Množství:</span>
+                            <span class="fw-bold">{{ item.mnozstvi }} ks</span>
+                          </div>
+                          <div class="d-flex justify-content-between">
+                            <span class="text-muted">Cena za kus:</span>
+                            <span class="fw-bold">{{ item.cena }} Kč</span>
+                          </div>
+                        </div>
+                        <form method="POST" class="mt-auto">
+                          {% csrf_token %}
+                          <input type="hidden" name="odebrat" value="{{ item.id }}">
+                          <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-trash-alt me-2"></i>Odebrat
+                          </button>
+                        </form>
+                      </div>
                     </div>
-                  </div>
-                {% endfor %}
-              </div>
-              <form method="POST" class="mt-4">
-                {% csrf_token %}
-                <button type="submit" name="rezervovat" class="btn btn-success w-100">Rezervovat vše</button>
-              </form>
-            {% else %}
-              <p class="text-muted">Košík je prázdný.</p>
-            {% endif %}
+                  {% endfor %}
+                </div>
+                <form method="POST" class="mt-4">
+                  {% csrf_token %}
+                  <button type="submit" name="rezervovat" class="btn btn-lg w-100 py-3" style="background-color: #41644A; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <i class="fas fa-check-circle me-2"></i>Dokončit rezervaci zápůjček
+                  </button>
+                </form>
+              {% else %}
+                <div class="text-center py-5">
+                  <i class="fas fa-shopping-cart text-muted" style="font-size: 3rem;"></i>
+                  <p class="mt-3 mb-0 fs-5">Košík je prázdný.</p>
+                  <p class="text-muted">Vyberte si předměty k zapůjčení z nabídky vlevo.</p>
+                </div>
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>
