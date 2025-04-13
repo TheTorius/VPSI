@@ -1,21 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Page</title>
-    <!-- Bootstrap CSS via CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block title %}Uživatelský profil{% endblock %}
 
-
-    {% load static %}
-    <link href="{% static './style.css' %}" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
-
-</head>
-
+{% block content %}
 <style>
     /* Zoom card animation */
     @keyframes zoomin {
@@ -71,246 +59,87 @@
     }
 </style>
 
-<body style="background-color: #0D4715;">
-  {% if error %}
-      <script>
-          alert("{{ message }}");
-          window.location.href = '/index';
-      </script>
-  {% endif %}
-    <div id="particles-js"></div>
-
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <!-- Logo -->
-            <a class="navbar-brand" href="{% url 'index' %}">LOGO</a>
-            <!-- Toggle button for mobile -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <!-- Navigation Links -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'index' %}">Novinky</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'hriste' %}">Hřiště</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'rezervace' %}">Moje rezervace</a>
-                    </li>
-                </ul>
-                <!-- Login and Sign Up Buttons -->
-                <div class="d-flex align-items-center">
-                    {% if user.is_authenticated %}
-                        <span class="me-2">Signed as: {{ user.uzivatele.jmeno }}</span>
-                        <a href="{% url 'logout' %}" class="btn btn-outline-danger me-2">Logout</a>
-                        <a href="{% url 'profile' %}" class="btn btn-outline-primary me-2">Nastavení</a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
-                        <a href="{% url 'signup' %}" class="btn btn-primary">Sign up</a>
-                    {% endif %}
-                </div>
-            </div>
+<div class="row">
+    {% if messages %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
         </div>
-    </nav>
-
-
-    <div class="row">
-        {% if messages %}
-                    <div class="alert alert-info">
-                        {% for message in messages %}
-                            {{ message }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-    </div>
-    <div class="row">
-        <div class="col-sm-3">
-
-        </div>
-        <div class="col-sm-6">
-            <div class="row" style="padding-top: 15px;">
-                <div class="col-sm-1"></div>
-                <div class="col-sm-10">
-                    <div class="card" style="border-radius: 10px; border-width: 1px; border-color: white; background-color: rgba(255, 255, 255, 0.35);">
-                        <div class="card-body" style="text-align: center; ">
-                            <h1>Nastavení</h1>
-                            <hr class="hr">
-                            <p>
-                                Tato stránka slouží pro úpravu uživatelských údajů
-                                aktuálně přihlášeného uživatele.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-1"></div>
-            </div>
-            <div class="row" style="padding-left: 41%; padding-top: 15px;">
-                <div class="col-sm-12 text-center">
-                    <div class="avatar">
-                        <img src="{% static 'person.svg' %}" alt="Avatar">
-                    </div>
-                </div>
-            </div>
-            <div class="row" style="text-align: center;">
-                {% if user.is_authenticated %}
-                            <h2>{{ user.uzivatele.jmeno }} {{ user.uzivatele.prijmeni }}</h2>
-                        {% endif %}
-            </div>
-            <div class="row" style="padding-top: 15px;">
-                <div class="col-sm-12">
-                    <div class="card" style="border-radius: 10px; border-width: 1px; border-color: white; background-color: rgba(255, 255, 255, 0.35);">
-                        <div class="card-body">
-                            <h2 style="text-align: center;">Nastavení informací</h2>
-                            <form method="post">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                                {% for error in form.errors %}
-                                    <div class="alert alert-danger">{{ error }}</div>
-                                {% endfor %}
-                                <button class="btn btn-primary" type="submit"  name="change_info">Uložit</button>
-                            </form>
-                            <hr class="hr">
-                            <h2 style="text-align: center;">Nastavení hesla</h2>
-                            <form method="post">
-                                {% csrf_token %}
-                                {{ form2.as_p }}
-                                {% for error in form2.errors %}
-                                    <div class="alert alert-danger">{{ error }}</div>
-                                {% endfor %}
-                                <button class="btn btn-primary" type="submit"  name="change_password">Uložit</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            
-        </div>
-    </div>
+    {% endif %}
+</div>
+<div class="row">
+    <div class="col-sm-3">
 
     </div>
-
-    <!-- Bootstrap JS and Popper.js via CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
-
-    <!-- Particles.js config -->
-    <script>
-      // Ensure our particles container exists
-      var tag_id = 'particles-js';
-      var pJS_tag = document.getElementById(tag_id);
-
-      if (pJS_tag) {
-        var pJS_canvas_class = 'particles-js-canvas-el';
-        var exist_canvas = pJS_tag.getElementsByClassName(pJS_canvas_class);
-        // Remove old canvas if needed
-        if (exist_canvas.length) {
-          while (exist_canvas.length > 0) {
-            pJS_tag.removeChild(exist_canvas[0]);
-          }
-        }
-        console.log("Canvas inicializován");
-      } else {
-        console.error("Element s ID '" + tag_id + "' neexistuje.");
-      }
-
-      particlesJS('particles-js', {
-        "particles": {
-          "number": {
-            "value": 8,
-            "density": {
-              "enable": true,
-              "value_area": 800
-            }
-          },
-          "color": { "value": "#e9762b" },
-          "shape": {
-            "type": "polygon",
-            "stroke": { "width": 0, "color": "#000" },
-            "polygon": { "nb_sides": 6 },
-            "image": { "src": "img/github.svg", "width": 100, "height": 100 }
-          },
-          "opacity": {
-            "value": 0.3,
-            "random": true,
-            "anim": {
-              "enable": false,
-              "speed": 1.5,
-              "opacity_min": 0.1,
-              "sync": false
-            }
-          },
-          "size": {
-            "value": 160,
-            "random": false,
-            "anim": {
-              "enable": true,
-              "speed": 10,
-              "size_min": 40,
-              "sync": false
-            }
-          },
-          "line_linked": {
-            "enable": false,
-            "distance": 200,
-            "color": "#ffffff",
-            "opacity": 1,
-            "width": 2
-          },
-          "move": {
-            "enable": true,
-            "speed": 1.5,
-            "direction": "none",
-            "random": false,
-            "straight": false,
-            "out_mode": "out",
-            "bounce": false,
-            "attract": {
-              "enable": false,
-              "rotateX": 600,
-              "rotateY": 1200
-            }
-          }
-        },
-        "interactivity": {
-          "detect_on": "canvas",
-          "events": {
-            "onhover": {
-              "enable": false,
-              "mode": "grab"
-            },
-            "onclick": {
-              "enable": false,
-              "mode": "push"
-            },
-            "resize": true
-          },
-          "modes": {
-            "grab": {
-              "distance": 400,
-              "line_linked": { "opacity": 1 }
-            },
-            "bubble": {
-              "distance": 400,
-              "size": 40,
-              "duration": 2,
-              "opacity": 8,
-              "speed": 3
-            },
-            "repulse": { "distance": 200, "duration": 0.4 },
-            "push": { "particles_nb": 4 },
-            "remove": { "particles_nb": 2 }
-          }
-        },
-        "retina_detect": true
-      });
-    </script>
-</body>
-</html>
+    <div class="col-sm-6">
+        <div class="row" style="padding-top: 15px;">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <div class="card" style="border-radius: 10px; border-width: 1px; border-color: white; background-color: rgba(255, 255, 255, 0.35);">
+                    <div class="card-body" style="text-align: center; ">
+                        <h1><i class="fas fa-cog me-2"></i>Nastavení</h1>
+                        <hr class="hr">
+                        <p>
+                            <i class="fas fa-info-circle me-2"></i>Tato stránka slouží pro úpravu uživatelských údajů
+                            aktuálně přihlášeného uživatele.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row" style="padding-left: 41%; padding-top: 15px;">
+            <div class="col-sm-12 text-center">
+                <div class="avatar">
+                    <img src="{% static 'person.svg' %}" alt="Avatar">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="text-align: center;">
+            {% if user.is_authenticated %}
+                <h2><i class="fas fa-user me-2"></i>{{ user.uzivatele.jmeno }} {{ user.uzivatele.prijmeni }}</h2>
+            {% endif %}
+        </div>
+        <div class="row" style="padding-top: 15px;">
+            <div class="col-sm-12">
+                <div class="card" style="border-radius: 10px; border-width: 1px; border-color: white; background-color: rgba(255, 255, 255, 0.35);">
+                    <div class="card-body">
+                        <h2 style="text-align: center;"><i class="fas fa-user-edit me-2"></i>Nastavení informací</h2>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            {% for error in form.errors %}
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                                </div>
+                            {% endfor %}
+                            <button class="btn btn-primary" type="submit" name="change_info">
+                                <i class="fas fa-save me-2"></i>Uložit
+                            </button>
+                        </form>
+                        <hr class="hr">
+                        <h2 style="text-align: center;"><i class="fas fa-key me-2"></i>Nastavení hesla</h2>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form2.as_p }}
+                            {% for error in form2.errors %}
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                                </div>
+                            {% endfor %}
+                            <button class="btn btn-primary" type="submit" name="change_password">
+                                <i class="fas fa-save me-2"></i>Uložit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        
+    </div>
+</div>
+{% endblock %}

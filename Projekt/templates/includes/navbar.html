@@ -1,0 +1,33 @@
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'index' %}">LOGO</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}"><i class="fas fa-newspaper me-1"></i>Novinky</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'hriste' %}"><i class="fas fa-futbol me-1"></i>Hřiště</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rezervace' %}"><i class="fas fa-calendar-alt me-1"></i>Moje rezervace</a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                    <span class="me-2"><i class="fas fa-user me-1"></i>Signed as: {{ user.uzivatele.jmeno }}</span>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger me-2"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-primary me-2"><i class="fas fa-cog me-1"></i>Nastavení</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary me-2"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
+                    <a href="{% url 'signup' %}" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i>Sign up</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav> 

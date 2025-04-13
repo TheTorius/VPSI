@@ -1,31 +1,10 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-  <meta charset="UTF-8">
-  <title>Seznam zapůjčených předmětů - Rezervace č. {{ rez.id }}</title>
+{% extends 'base.html' %}
+{% load static %}
 
-  <!-- Bootstrap CSS pro styl -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block title %}Seznam zapůjčených předmětů - Rezervace č. {{ rez.id }}{% endblock %}
 
-  <!-- Vlastní CSS -->
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'style.css' %}">
-
-  <style>
-    body {
-      background-color: #f8f9fa;
-      padding: 40px;
-    }
-    @media print {
-      .no-print {
-        display: none;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="container">
+{% block content %}
+  <div class="container print-container">
     <h2 class="mb-4">Seznam zapůjčených předmětů</h2>
 
     <h3>Rezervace č. {{ rez.rezervace.id }} - {{ rez.rezervace.hriste.nazev }} ({{ rez.rezervace.hriste.typ }})</h3>
@@ -55,8 +34,21 @@
     <div class="no-print">
       <button onclick="window.print()" class="btn btn-primary">Tisknout</button>
     </div>
-
   </div>
 
-</body>
-</html>
+  <style>
+    @media print {
+      .no-print, nav, #particles-js {
+        display: none !important;
+      }
+      .print-container {
+        background-color: white !important;
+        padding: 20px;
+        margin: 0;
+      }
+      body {
+        background-color: white !important;
+      }
+    }
+  </style>
+{% endblock %}

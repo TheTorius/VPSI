@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title></title>
-  {% load static %}
-    <link href="{% static './style.css' %}" rel="stylesheet">
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script>
-  </script>
-</body>
-</html>
+{% block title %}Nastavení{% endblock %}
+
+{% block content %}
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Nastavení</h2>
+        <p>Obsah nastavení bude zde.</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
