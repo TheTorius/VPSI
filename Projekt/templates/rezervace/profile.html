@@ -5,61 +5,79 @@
 
 {% block content %}
 <style>
-    /* Zoom card animation */
-    @keyframes zoomin {
-        0% {
-            scale: 1;
-        }
-        100% {
-            scale: 1.05;
-        }
+    .card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
-    .card-zoom:hover {
-        animation: zoomin linear forwards 175ms;
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
-
-    /* Button color change on hover */
-    @keyframes btn-change-color {
-      0% {
-        background-color: rgba(0, 0, 0, alpha);
-      }
-      100% {
-        background-color: red;
-      }
-    }
-    .btn-color:hover {
-      animation: btn-change-color linear forwards 250ms;
-    }
-
-    /* Particles background */
-    #particles-js {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: -1;  /* Behind the page content */
+    
+    .section-header {
+        background-color: #41644A;
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+        text-align: center;
     }
 
     .avatar {
-      width: 135px;
-      height: 135px;
-      border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.6);
-      border: 3px solid #fff; /* Bílé okraje pro kroužek */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
+        width: 135px;
+        height: 135px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 5px solid #41644A; /* Změna okraje na #41644A */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        margin: 0 auto 20px auto;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
     .avatar img {
-      width: 90%; /* Zmenšení obrázku, aby byl uvnitř kroužku */
-      height: auto;
+        width: 85%;
+        height: auto;
+    }
+    
+    .btn-primary {
+        background-color: #41644A;
+        border-color: #41644A;
+        transition: all 0.3s ease;
+        border-radius: 50px;
+        padding: 8px 25px;
+        font-weight: 500;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary:hover {
+        background-color: #355035;
+        border-color: #355035;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .form-control, .form-select {
+        border-radius: 10px;
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 0 0.25rem rgba(65, 100, 74, 0.25);
+        border-color: #41644A;
     }
 </style>
 
-<div class="row">
+<div class="container my-5">
     {% if messages %}
         <div class="alert alert-info">
             <i class="fas fa-info-circle me-2"></i>
@@ -68,78 +86,77 @@
             {% endfor %}
         </div>
     {% endif %}
-</div>
-<div class="row">
-    <div class="col-sm-3">
 
-    </div>
-    <div class="col-sm-6">
-        <div class="row" style="padding-top: 15px;">
-            <div class="col-sm-1"></div>
-            <div class="col-sm-10">
-                <div class="card" style="border-radius: 10px; border-width: 1px; border-color: white; background-color: rgba(255, 255, 255, 0.35);">
-                    <div class="card-body" style="text-align: center; ">
-                        <h1><i class="fas fa-cog me-2"></i>Nastavení</h1>
-                        <hr class="hr">
-                        <p>
-                            <i class="fas fa-info-circle me-2"></i>Tato stránka slouží pro úpravu uživatelských údajů
-                            aktuálně přihlášeného uživatele.
-                        </p>
-                    </div>
-                </div>
+    <!-- Fancy Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="section-header">
+                <h1 class="display-5 fw-bold mb-2"><i class="fas fa-user-cog me-3"></i>Uživatelský profil</h1>
+                <p class="lead mb-0">Spravujte své osobní údaje a nastavení účtu</p>
             </div>
-            <div class="col-sm-1"></div>
         </div>
-        <div class="row" style="padding-left: 41%; padding-top: 15px;">
-            <div class="col-sm-12 text-center">
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 p-4 text-center">
                 <div class="avatar">
                     <img src="{% static 'person.svg' %}" alt="Avatar">
                 </div>
-            </div>
-        </div>
-        <div class="row" style="text-align: center;">
-            {% if user.is_authenticated %}
-                <h2><i class="fas fa-user me-2"></i>{{ user.uzivatele.jmeno }} {{ user.uzivatele.prijmeni }}</h2>
-            {% endif %}
-        </div>
-        <div class="row" style="padding-top: 15px;">
-            <div class="col-sm-12">
-                <div class="card" style="border-radius: 10px; border-width: 1px; border-color: white; background-color: rgba(255, 255, 255, 0.35);">
-                    <div class="card-body">
-                        <h2 style="text-align: center;"><i class="fas fa-user-edit me-2"></i>Nastavení informací</h2>
-                        <form method="post">
-                            {% csrf_token %}
-                            {{ form.as_p }}
-                            {% for error in form.errors %}
-                                <div class="alert alert-danger">
-                                    <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
-                                </div>
-                            {% endfor %}
-                            <button class="btn btn-primary" type="submit" name="change_info">
-                                <i class="fas fa-save me-2"></i>Uložit
-                            </button>
-                        </form>
-                        <hr class="hr">
-                        <h2 style="text-align: center;"><i class="fas fa-key me-2"></i>Nastavení hesla</h2>
-                        <form method="post">
-                            {% csrf_token %}
-                            {{ form2.as_p }}
-                            {% for error in form2.errors %}
-                                <div class="alert alert-danger">
-                                    <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
-                                </div>
-                            {% endfor %}
-                            <button class="btn btn-primary" type="submit" name="change_password">
-                                <i class="fas fa-save me-2"></i>Uložit
-                            </button>
-                        </form>
+                {% if user.is_authenticated %}
+                    <h2 class="mt-3 mb-1"><i class="fas fa-user me-2"></i>{{ user.uzivatele.jmeno }} {{ user.uzivatele.prijmeni }}</h2>
+                    <p class="text-muted">Člen od: {{ user.date_joined|date:"d.m.Y" }}</p>
+                {% endif %}
+                <div class="mt-4">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'rezervace' %}" class="btn btn-outline-primary rounded-pill">
+                            <i class="fas fa-calendar-check me-2"></i>Moje rezervace
+                        </a>
+                        <a href="{% url 'hriste' %}" class="btn btn-outline-success rounded-pill">
+                            <i class="fas fa-plus-circle me-2"></i>Nová rezervace
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-sm-3">
         
+        <div class="col-md-8">
+            <div class="card mb-4 p-4">
+                <h3 class="mb-4 fw-bold" style="color: #41644A;"><i class="fas fa-user-edit me-2"></i>Nastavení informací</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    {% for error in form.errors %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                        </div>
+                    {% endfor %}
+                    <div class="d-grid mt-4">
+                        <button class="btn btn-primary py-2" type="submit" name="change_info">
+                            <i class="fas fa-save me-2"></i>Uložit změny
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="card p-4">
+                <h3 class="mb-4 fw-bold" style="color: #41644A;"><i class="fas fa-key me-2"></i>Změna hesla</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form2.as_p }}
+                    {% for error in form2.errors %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                        </div>
+                    {% endfor %}
+                    <div class="d-grid mt-4">
+                        <button class="btn btn-primary py-2" type="submit" name="change_password">
+                            <i class="fas fa-lock me-2"></i>Změnit heslo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

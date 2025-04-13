@@ -4,31 +4,94 @@
 {% block title %}Moje Rezervace{% endblock %}
 
 {% block content %}
-  <div class="container my-5">
-    <!-- Hlavička stránky -->
-    <div class="row">
-      <div class="col-sm-3"></div>
-      <div class="col-sm-6">
-        <div class="card text-center" style="padding: 15px; border-width: 4px; 
-             border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-          <h2>Moje Rezervace</h2>
-          <p>Zde naleznete přehled vašich rezervací.</p>
-        </div>
-      </div>
-      <div class="col-sm-3"></div>
-    </div>
+<style>
+  .card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  .section-header {
+    background-color: #41644A;
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  
+  .btn {
+    transition: all 0.3s ease;
+    border-radius: 50px;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .table thead {
+    background-color: #41644A;
+    color: white;
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: rgba(65, 100, 74, 0.1);
+  }
+  
+  .form-control, .form-select {
+    border-radius: 10px;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(65, 100, 74, 0.25);
+    border-color: #41644A;
+  }
+</style>
 
-    <!-- Formulář pro filtrování (datum + typ hřiště) -->
-    <div class="row mt-4 mb-4">
-      <div class="col-sm-12">
-        <div class="card" style="padding: 20px; background: rgba(255, 255, 255, 0.5);">
-          <form method="GET" class="row g-3">
-            <div class="col-auto">
-              <label for="datum" class="form-label">Datum</label>
+<div class="container my-5">
+  <!-- Fancy Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="section-header">
+        <h1 class="display-5 fw-bold mb-2"><i class="fas fa-calendar-check me-3"></i>Moje Rezervace</h1>
+        <p class="lead mb-0">Přehled všech vašich aktivních rezervací a zápůjček</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulář pro filtrování (datum + typ hřiště) -->
+  <div class="row mb-4">
+    <div class="col-sm-12">
+      <div class="card p-4">
+        <form method="GET" class="row g-3">
+          <div class="col-md-4">
+            <label for="datum" class="form-label fw-bold">Datum</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-calendar"></i></span>
               <input type="date" name="datum" id="datum" value="{{ vybrane_datum }}" class="form-control" />
             </div>
-            <div class="col-auto">
-              <label for="typ_hriste" class="form-label">Typ hřiště</label>
+          </div>
+          <div class="col-md-4">
+            <label for="typ_hriste" class="form-label fw-bold">Typ hřiště</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-table-tennis"></i></span>
               <select name="typ_hriste" id="typ_hriste" class="form-select">
                 <option value="">-- Všechny --</option>
                 {% for typ in hriste_typy %}
@@ -36,107 +99,135 @@
                 {% endfor %}
               </select>
             </div>
-            <div class="col-auto align-self-end">
-              <button type="submit" class="btn btn-dark">Hledat</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Seznam rezervací -->
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="card" style="padding: 20px; border-width: 4px; 
-             border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-          <h3>Seznam rezervací</h3>
-          {% if reservations %}
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead>
-                  <tr>
-                    <th>Datum</th>
-                    <th>Čas</th>
-                    <th>Hřiště</th>
-                    <th>Stav</th>
-                    <th>Cena (Kč/h)</th>
-                    <th>Akce</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for rez in reservations %}
-                  <tr>
-                    <td>{{ rez.datum|date:"d.m.Y" }}</td>
-                    <td>{{ rez.cas_zacatku|time:"H:i" }} - {{ rez.cas_konce|time:"H:i" }}</td>
-                    <td>{{ rez.hriste.nazev }} ({{ rez.hriste.typ }})</td>
-                    <td>{{ rez.get_stav_display }}</td>
-                    <td>{{ rez.cena }}</td>
-                    <td>
-                      <a href="{% url 'zrusit_rezervaci' rez.id %}"
-                        class="btn btn-danger btn-sm"
-                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci? Budou odstraněny i její související zápujčky.');">
-                        Zrušit
-                      </a>
-                      <a href="{% url 'tisk_rezervace' rez.id %}" target="_blank" class="btn btn-secondary btn-sm">Tisk</a>
-                        <a href="{% url 'zapujcky_k_rezervaci' rez.id %}" class="btn btn-success btn-sm">Zápůjčky</a>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          {% else %}
-            <p>Nemáte žádné rezervace pro vybrané podmínky.</p>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    <br>
-    <!-- Seznam zapujcek -->
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="card" style="padding: 20px; border-width: 4px; 
-             border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-          <h3>Seznam zápujček</h3>
-          {% if reservations_zapujcky %}
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead>
-                  <tr>
-                    <th>Nazev</th>
-                    <th>Rezervace</th>
-                    <th>Množství</th>
-                    <th>Cena (Kč/ks)</th>
-                    <th>Typ</th>
-                    <th>Akce</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for rez in reservations_zapujcky %}
-                  <tr>
-                    <td>{{ rez.zapujcka.nazev }}</td>
-                    <td>{{ rez.rezervace.hriste.nazev }} ({{ rez.rezervace.hriste.typ }}) - {{ rez.rezervace.datum|date:"d.m.Y" }} ({{ rez.rezervace.cas_zacatku|time:"H:i" }} - {{ rez.rezervace.cas_konce|time:"H:i" }})</td>
-                    <td>{{ rez.mnozstvi }}</td>
-                    <td>{{ rez.cena_za_kus}}</td>
-                    <td>{{ rez.zapujcka.typ }}</td>
-                    <td>
-                      <a href="{% url 'zrusit_rezervaci_zapujcky' rez.id %}"
-                        class="btn btn-danger btn-sm"
-                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci zapujcky?');">
-                        Zrušit
-                      </a>
-                      <a href="{% url 'tisk_rezervace_zapujcka' rez.id %}" target="_blank" class="btn btn-secondary btn-sm">Tisk</a>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          {% else %}
-            <p>Nemáte žádné zápujčky.</p>
-          {% endif %}
-        </div>
+          </div>
+          <div class="col-md-4 align-self-end">
+            <button type="submit" class="btn btn-primary w-100" style="background-color: #41644A; border-color: #41644A; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+              <i class="fas fa-search me-2"></i>Hledat
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
+
+  <!-- Seznam rezervací -->
+  <div class="row mb-4">
+    <div class="col-sm-12">
+      <div class="card p-4">
+        <h3 class="mb-4 fw-bold" style="color: #41644A;"><i class="fas fa-list-alt me-2"></i>Seznam rezervací</h3>
+        {% if reservations %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Datum</th>
+                  <th>Čas</th>
+                  <th>Hřiště</th>
+                  <th>Stav</th>
+                  <th>Cena (Kč/h)</th>
+                  <th>Akce</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for rez in reservations %}
+                <tr>
+                  <td><i class="far fa-calendar-alt me-2 text-muted"></i>{{ rez.datum|date:"d.m.Y" }}</td>
+                  <td><i class="far fa-clock me-2 text-muted"></i>{{ rez.cas_zacatku|time:"H:i" }} - {{ rez.cas_konce|time:"H:i" }}</td>
+                  <td><i class="fas fa-map-marker-alt me-2 text-muted"></i>{{ rez.hriste.nazev }} ({{ rez.hriste.typ }})</td>
+                  <td>
+                    <span class="badge {% if rez.stav == 'A' %}bg-success{% elif rez.stav == 'S' %}bg-warning{% else %}bg-secondary{% endif %} rounded-pill px-3 py-2">
+                      {{ rez.get_stav_display }}
+                    </span>
+                  </td>
+                  <td><strong>{{ rez.cena }} Kč</strong></td>
+                  <td>
+                    <div class="btn-group">
+                      <a href="{% url 'zrusit_rezervaci' rez.id %}"
+                        class="btn btn-outline-danger btn-sm"
+                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci? Budou odstraněny i její související zápujčky.');">
+                        <i class="fas fa-trash-alt me-1"></i>Zrušit
+                      </a>
+                      <a href="{% url 'tisk_rezervace' rez.id %}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-print me-1"></i>Tisk
+                      </a>
+                      <a href="{% url 'zapujcky_k_rezervaci' rez.id %}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-shopping-cart me-1"></i>Zápůjčky
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center py-5">
+            <i class="fas fa-calendar-times text-muted" style="font-size: 3rem;"></i>
+            <p class="mt-3 mb-0 fs-5">Nemáte žádné rezervace pro vybrané podmínky.</p>
+            <a href="{% url 'hriste' %}" class="btn btn-success mt-4" style="background-color: #41644A; border-color: #41644A;">
+              <i class="fas fa-plus-circle me-2"></i>Vytvořit novou rezervaci
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Seznam zapujcek -->
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card p-4">
+        <h3 class="mb-4 fw-bold" style="color: #41644A;"><i class="fas fa-shopping-bag me-2"></i>Seznam zápůjček</h3>
+        {% if reservations_zapujcky %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Název</th>
+                  <th>Rezervace</th>
+                  <th>Množství</th>
+                  <th>Cena (Kč/ks)</th>
+                  <th>Typ</th>
+                  <th>Akce</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for rez in reservations_zapujcky %}
+                <tr>
+                  <td><i class="fas fa-tag me-2 text-muted"></i>{{ rez.zapujcka.nazev }}</td>
+                  <td>
+                    <i class="fas fa-map-marker-alt me-2 text-muted"></i>{{ rez.rezervace.hriste.nazev }} ({{ rez.rezervace.hriste.typ }})
+                    <br>
+                    <small class="text-muted"><i class="far fa-calendar-alt me-1"></i>{{ rez.rezervace.datum|date:"d.m.Y" }} ({{ rez.rezervace.cas_zacatku|time:"H:i" }} - {{ rez.rezervace.cas_konce|time:"H:i" }})</small>
+                  </td>
+                  <td><span class="badge bg-info rounded-pill px-3 py-2">{{ rez.mnozstvi }} ks</span></td>
+                  <td><strong>{{ rez.cena_za_kus}} Kč</strong></td>
+                  <td>{{ rez.zapujcka.typ }}</td>
+                  <td>
+                    <div class="btn-group">
+                      <a href="{% url 'zrusit_rezervaci_zapujcky' rez.id %}"
+                        class="btn btn-outline-danger btn-sm"
+                        onclick="return confirm('Opravdu chcete zrušit tuto rezervaci zapujcky?');">
+                        <i class="fas fa-trash-alt me-1"></i>Zrušit
+                      </a>
+                      <a href="{% url 'tisk_rezervace_zapujcka' rez.id %}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-print me-1"></i>Tisk
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center py-5">
+            <i class="fas fa-shopping-basket text-muted" style="font-size: 3rem;"></i>
+            <p class="mt-3 mb-0 fs-5">Nemáte žádné zápůjčky.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
