@@ -34,42 +34,66 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+  
+  .card {
+    transition: all 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section-header {
+    background-color: #41644A;
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    text-align: center;
+  }
 </style>
 
 <div class="container my-5">
-    <!-- Hlavička stránky -->
-    <div class="row">
-      <div class="col-sm-3"></div>
-      <div class="col-sm-6">
-        <div class="card text-center" style="padding: 15px; border-width: 4px; 
-             border-radius: 10px; background: rgba(255, 255, 255, 0.5)">
-          <h2>Rezervace</h2>
-          <p>Zde naleznete přehled rezervací hřišť na vybraný den.</p>
+    <!-- Hlavička stránky s fancy designem -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="section-header">
+          <h1 class="display-5 fw-bold mb-2"><i class="fas fa-calendar-alt me-3"></i>Rezervace</h1>
+          <p class="lead mb-0">Vyberte si volný termín a rezervujte si své oblíbené hřiště</p>
         </div>
       </div>
-      <div class="col-sm-3"></div>
     </div>
 
     <!-- Formulář pro filtrování (datum + typ hřiště) -->
     <div class="row mt-4 mb-4">
       <div class="col-sm-12">
-        <div class="card" style="padding: 20px; background: rgba(255, 255, 255, 0.5);">
+        <div class="card border-0 shadow-lg" style="padding: 20px; background: rgba(255, 255, 255, 0.7); border-radius: 15px;">
           <form method="GET" class="row g-3">
-            <div class="col-auto">
-              <label for="datum" class="form-label">Datum</label>
-              <input type="date" name="datum" id="datum" value="{{ vybrane_datum|date:'Y-m-d' }}" class="form-control" />
+            <div class="col-md-4">
+              <label for="datum" class="form-label fw-bold">Datum</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                <input type="date" name="datum" id="datum" value="{{ vybrane_datum|date:'Y-m-d' }}" class="form-control" />
+              </div>
             </div>
-            <div class="col-auto">
-              <label for="typ_hriste" class="form-label">Typ hřiště</label>
-              <select name="typ_hriste" id="typ_hriste" class="form-select">
-                <option value="">-- Všechny --</option>
-                {% for typ in hriste_typy %}
-                  <option value="{{ typ }}" {% if typ == vybrany_typ %}selected{% endif %}>{{ typ }}</option>
-                {% endfor %}
-              </select>
+            <div class="col-md-4">
+              <label for="typ_hriste" class="form-label fw-bold">Typ hřiště</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-table-tennis"></i></span>
+                <select name="typ_hriste" id="typ_hriste" class="form-select">
+                  <option value="">-- Všechny --</option>
+                  {% for typ in hriste_typy %}
+                    <option value="{{ typ }}" {% if typ == vybrany_typ %}selected{% endif %}>{{ typ }}</option>
+                  {% endfor %}
+                </select>
+              </div>
             </div>
-            <div class="col-auto align-self-end">
-              <button type="submit" class="btn btn-dark">Hledat</button>
+            <div class="col-md-4 align-self-end">
+              <button type="submit" class="btn btn-primary w-100" style="box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <i class="fas fa-search me-2"></i>Hledat
+              </button>
             </div>
           </form>
 
@@ -78,12 +102,12 @@
               <hr class="hr">
             </div>
           </div>
-          <div class="row mt-4 mb-4">
+          <div class="row mt-4">
             <div class="col-sm-12">
-              <h3>Vyberte čas rezervace</h3>
+              <h3 class="mb-4 fw-bold text-center" style="color: #41644A;"><i class="fas fa-clock me-2"></i>Vyberte čas rezervace</h3>
               <div class="table-responsive">
                 <table class="table table-bordered text-center" id="reservation-table">
-                  <thead class="table-light">
+                  <thead style="background-color: #41644A; color: white;">
                     <tr>
                       <th scope="col">Hřiště</th>
                       {% for hour in hours %}
@@ -103,9 +127,9 @@
                             {% if hour.start in court.reserved_hours %}data-reserved="true"{% endif %}
                           >
                             {% if hour.start in court.reserved_hours %}
-                              Obsazeno
+                              <i class="fas fa-times-circle me-1"></i>Obsazeno
                             {% else %}
-                              Volné
+                              <i class="fas fa-check-circle me-1"></i>Volné
                             {% endif %}
                           </td>
                         {% endfor %}
@@ -113,14 +137,18 @@
                     {% empty %}
                       <tr>
                         <td colspan="{{ hours|length|add:1 }}" class="text-center">
-                          Žádná hřiště nenalezena.
+                          <i class="fas fa-exclamation-circle me-2"></i>Žádná hřiště nenalezena.
                         </td>
                       </tr>
                     {% endfor %}
                   </tbody>
                 </table>
-                <div class="text-center mt-3">
-                  <button type="button" class="btn btn-primary" id="submit-reservations" disabled>Rezervovat vybrané časy</button>
+                <div class="text-center mt-4">
+                  <button type="button" class="btn btn-lg py-3 px-5" 
+                          id="submit-reservations" disabled
+                          style="background-color: #41644A; color: white; border-radius: 50px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <i class="fas fa-calendar-check me-2"></i>Rezervovat vybrané časy
+                  </button>
                 </div>
               </div>
             </div>
@@ -151,8 +179,10 @@
           
           if (this.classList.contains('selected')) {
             selectedSlots.push(slotKey);
+            this.innerHTML = '<i class="fas fa-shopping-cart me-1"></i>Vybráno';
           } else {
             selectedSlots = selectedSlots.filter(item => item !== slotKey);
+            this.innerHTML = '<i class="fas fa-check-circle me-1"></i>Volné';
           }
           
           // Aktualizace stavu tlačítka
