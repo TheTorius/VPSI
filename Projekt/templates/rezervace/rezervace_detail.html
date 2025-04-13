@@ -211,10 +211,10 @@
                             </div>
                             
                             <div class="detail-label">Vytvořeno</div>
-                            <div class="detail-value">{{ rezervace.created_at|date:"d.m.Y H:i" }}</div>
+                            <div class="detail-value">{{ rezervace.vytvoreno|date:"d.m.Y H:i" }}</div>
                             
                             <div class="detail-label">Aktualizováno</div>
-                            <div class="detail-value">{{ rezervace.updated_at|date:"d.m.Y H:i" }}</div>
+                            <div class="detail-value">{{ rezervace.naposledy_upraveno|date:"d.m.Y H:i" }}</div>
                         </div>
                     </div>
                     
@@ -227,17 +227,6 @@
                     
                     <div class="price-box">
                         <div class="price-title">Shrnutí platby</div>
-                        <div class="price-row">
-                            <span class="price-label">Základní cena ({{ rezervace.hriste.cena }} Kč/hod)</span>
-                            <span>{{ rezervace.zakladni_cena }} Kč</span>
-                        </div>
-                        {% if rezervace.sleva > 0 %}
-                            <div class="price-row">
-                                <span class="price-label">Sleva</span>
-                                <span>-{{ rezervace.sleva }} Kč</span>
-                            </div>
-                        {% endif %}
-                        <hr>
                         <div class="price-row">
                             <span class="price-label">Celková cena</span>
                             <span class="price-total">{{ rezervace.cena }} Kč</span>
@@ -287,21 +276,18 @@
             </div>
         </div>
         
-        <!-- Pravý sloupec - Umístění hřiště -->
+        <!-- Pravý sloupec - Informace o hřišti -->
         <div class="col-lg-4">
             <div class="detail-card">
                 <div class="card-header">
                     <h5 class="mb-0">Informace o hřišti</h5>
                 </div>
                 <div class="card-body">
-                    <div class="detail-label">Adresa</div>
-                    <div class="detail-value">{{ rezervace.hriste.adresa }}</div>
-                    
                     <div class="detail-label">Typ</div>
-                    <div class="detail-value">{{ rezervace.hriste.get_typ_display }}</div>
+                    <div class="detail-value">{{ rezervace.hriste.typ }}</div>
                     
-                    <div class="detail-label">Povrch</div>
-                    <div class="detail-value">{{ rezervace.hriste.get_povrch_display }}</div>
+                    <div class="detail-label">Popis</div>
+                    <div class="detail-value">{{ rezervace.hriste.popis }}</div>
                     
                     {% if rezervace.hriste.pravidla %}
                         <div class="notes-section">
@@ -309,15 +295,6 @@
                             <div>{{ rezervace.hriste.pravidla|linebreaks }}</div>
                         </div>
                     {% endif %}
-                    
-                    <div class="map-container mt-4">
-                        <!-- Zde by se načetla mapa s polohou hřiště, např. Google Maps -->
-                        <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ rezervace.hriste.adresa|urlencode }}&zoom=15&size=400x300&markers=color:red%7C{{ rezervace.hriste.adresa|urlencode }}&key=YOUR_API_KEY" class="img-fluid" alt="Mapa hřiště">
-                    </div>
-                    
-                    <a href="https://www.google.com/maps/search/?api=1&query={{ rezervace.hriste.adresa|urlencode }}" class="btn btn-outline-primary w-100" target="_blank">
-                        <i class="fas fa-map-marker-alt me-2"></i>Otevřít v Google Maps
-                    </a>
                 </div>
             </div>
         </div>
