@@ -55,4 +55,7 @@ urlpatterns = [
     
     # Veřejný přehled sportovišť (pro všechny uživatele)
     path('sportoviste/', views.hriste_public_list, name='hriste_public_list'),
+    path('rezervace/<int:rez_id>/', views.rezervace_detail, name='rezervace_detail'),
+    path('rezervace/upravit/<int:rez_id>/', views.rezervace_update, name='rezervace_update'),
+    path('admin_reservations/', views.admin_reservations, name='admin_reservations'),
 ]

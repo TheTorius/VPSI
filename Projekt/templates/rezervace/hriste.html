@@ -200,9 +200,70 @@
           return { court: courtId, hour: hour };
         });
         
-        // Zavolání funkce pro zpracování více rezervací
-        window.location.href = '/reserve_multiple/?slots=' + JSON.stringify(reservations);
+        // Získání data z formuláře
+        const datum = document.getElementById('datum').value;
+        
+        // Příprava dat pro odeslání
+        const postData = {
+          reservations: reservations,
+          datum: datum
+        };
+        
+        // Nastavení indikátoru načítání
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Zpracovávám...';
+        
+        // Odeslání POST požadavku pomocí fetch API
+        fetch('/reserve_multiple/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: JSON.stringify(postData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Úspěšná rezervace
+            alert('Rezervace byla úspěšně vytvořena!');
+            if (data.reservation_id) {
+              // Přesměrování na detail rezervace
+              window.location.href = `/rezervace/${data.reservation_id}/`;
+            } else {
+              // Fallback na stránku s rezervacemi
+              window.location.href = '/rezervace/';
+            }
+          } else {
+            // Chyba při rezervaci
+            alert('Chyba: ' + data.message);
+            submitButton.disabled = false;
+            submitButton.innerHTML = '<i class="fas fa-calendar-check me-2"></i>Rezervovat vybrané časy';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Došlo k chybě při zpracování požadavku. Zkuste to prosím znovu.');
+          submitButton.disabled = false;
+          submitButton.innerHTML = '<i class="fas fa-calendar-check me-2"></i>Rezervovat vybrané časy';
+        });
       });
     });
+    
+    // Funkce pro získání CSRF tokenu z cookies
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
   </script>
 {% endblock %}

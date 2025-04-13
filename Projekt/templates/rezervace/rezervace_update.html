@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Úprava rezervace{% endblock %}
+
+{% block content %}
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-header {
+        background-color: #41644A;
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+        text-align: center;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #444;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 10px;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #41644A;
+        box-shadow: 0 0 0 0.2rem rgba(65, 100, 74, 0.25);
+    }
+    
+    .btn-primary, .btn-success, .btn-danger, .btn-warning {
+        border-radius: 50px;
+        padding: 10px 25px;
+        font-weight: 500;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-primary {
+        background-color: #41644A;
+        border-color: #41644A;
+    }
+    
+    .btn-primary:hover {
+        background-color: #355035;
+        border-color: #355035;
+    }
+</style>
+
+<div class="container my-5">
+    {% if messages %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Hlavička stránky -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="section-header">
+                <h1 class="display-5 fw-bold mb-2">
+                    <i class="fas fa-edit me-3"></i>Úprava rezervace
+                </h1>
+                <p class="lead mb-0">{{ rezervace.hriste.nazev }} - {{ rezervace.datum|date:'d.m.Y' }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card p-4 mb-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h3 class="mb-4 border-bottom pb-2">Informace o rezervaci</h3>
+                            
+                            <div class="form-group mb-3">
+                                <label for="id_hriste" class="form-label">Hřiště</label>
+                                <select name="hriste" id="id_hriste" class="form-select" required {% if not user.is_staff %}disabled{% endif %}>
+                                    {% for h in dostupna_hriste %}
+                                        <option value="{{ h.id }}" {% if h.id == rezervace.hriste.id %}selected{% endif %}>
+                                            {{ h.nazev }} ({{ h.typ }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if not user.is_staff %}
+                                    <input type="hidden" name="hriste" value="{{ rezervace.hriste.id }}">
+                                    <small class="text-muted">Pouze administrátoři mohou měnit hřiště.</small>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="id_datum" class="form-label">Datum</label>
+                                <input type="date" name="datum" id="id_datum" class="form-control" value="{{ rezervace.datum|date:'Y-m-d' }}" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="id_cas_zacatku" class="form-label">Čas začátku</label>
+                                        <input type="time" name="cas_zacatku" id="id_cas_zacatku" class="form-control" value="{{ rezervace.cas_zacatku|time:'H:i' }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="id_cas_konce" class="form-label">Čas konce</label>
+                                        <input type="time" name="cas_konce" id="id_cas_konce" class="form-control" value="{{ rezervace.cas_konce|time:'H:i' }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="id_popis" class="form-label">Popis (volitelné)</label>
+                                <textarea name="popis" id="id_popis" class="form-control" rows="3">{{ rezervace.popis }}</textarea>
+                            </div>
+                            
+                            {% if user.is_staff %}
+                                <div class="form-group mb-3">
+                                    <label for="id_stav" class="form-label">Stav rezervace</label>
+                                    <select name="stav" id="id_stav" class="form-select">
+                                        <option value="nova" {% if rezervace.stav == 'nova' %}selected{% endif %}>Nová</option>
+                                        <option value="potvrzena" {% if rezervace.stav == 'potvrzena' %}selected{% endif %}>Potvrzená</option>
+                                        <option value="zrusena" {% if rezervace.stav == 'zrusena' %}selected{% endif %}>Zrušená</option>
+                                    </select>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-3 justify-content-between mt-4">
+                        <a href="{% url 'rezervace_detail' rezervace.id %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Zpět
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Uložit změny
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const startTime = document.getElementById('id_cas_zacatku').value;
+            const endTime = document.getElementById('id_cas_konce').value;
+            
+            if (startTime >= endTime) {
+                e.preventDefault();
+                alert('Čas začátku musí být dříve než čas konce.');
+            }
+        });
+    });
+</script>
+{% endblock %} 

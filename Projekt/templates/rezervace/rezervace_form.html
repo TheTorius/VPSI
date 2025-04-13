@@ -1,0 +1,687 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.id %}
+        Upravit rezervaci #{{ form.instance.id }}
+    {% else %}
+        Nová rezervace
+    {% endif %}
+{% endblock %}
+
+{% block extra_head %}
+    <!-- Datepicker and Timepicker styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .section-header {
+            background-color: #41644A;
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-card {
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+        
+        .form-card .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 20px 25px;
+        }
+        
+        .form-card .card-body {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #41644A;
+            box-shadow: 0 0 0 0.25rem rgba(65, 100, 74, 0.25);
+        }
+        
+        .flatpickr-input {
+            background-color: white !important;
+        }
+        
+        .btn-form {
+            padding: 12px 25px;
+            font-weight: 500;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+        
+        .time-slot {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .time-slot:hover {
+            background-color: #e9ecef;
+        }
+        
+        .time-slot.selected {
+            background-color: #41644A;
+            color: white;
+            border-color: #41644A;
+        }
+        
+        .time-slot.unavailable {
+            background-color: #f8d7da;
+            color: #842029;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .hriste-selector {
+            margin-bottom: 20px;
+        }
+        
+        .hriste-card {
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .hriste-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hriste-card.selected {
+            border: 3px solid #41644A;
+        }
+        
+        .hriste-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .hriste-content {
+            padding: 20px;
+        }
+        
+        .hriste-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .hriste-info {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .price-badge {
+            background-color: #41644A;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        /* Select2 styling */
+        .select2-container--default .select2-selection--single {
+            height: 45px;
+            padding: 8px 8px;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 45px;
+        }
+        
+        .form-hint {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .error-feedback {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+        
+        .rezervace-summary {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .summary-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .summary-total {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #41644A;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    {% if messages %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Navigace zpět -->
+    <div class="mb-4">
+        <a href="{% if form.instance.id %}{% url 'rezervace_detail' form.instance.id %}{% else %}{% url 'rezervace' %}{% endif %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Zpět
+        </a>
+    </div>
+
+    <!-- Hlavička stránky -->
+    <div class="section-header mb-4">
+        <h1 class="display-5 fw-bold mb-0">
+            <i class="fas fa-calendar-plus me-3"></i>
+            {% if form.instance.id %}
+                Upravit rezervaci #{{ form.instance.id }}
+            {% else %}
+                Vytvořit novou rezervaci
+            {% endif %}
+        </h1>
+    </div>
+
+    <form method="post" id="rezervace-form">
+        {% csrf_token %}
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Formulář pro rezervaci -->
+                <div class="form-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Informace o rezervaci</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="form-group">
+                            <label for="{{ form.hriste.id_for_label }}">Hřiště</label>
+                            {{ form.hriste }}
+                            {% if form.hriste.errors %}
+                                <div class="error-feedback">
+                                    {% for error in form.hriste.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-hint">Vyberte hřiště, na kterém chcete rezervovat čas</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.datum.id_for_label }}">Datum</label>
+                            {{ form.datum }}
+                            {% if form.datum.errors %}
+                                <div class="error-feedback">
+                                    {% for error in form.datum.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-hint">Vyberte datum rezervace</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Čas</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="{{ form.cas_zacatku.id_for_label }}" class="form-label">Začátek</label>
+                                    {{ form.cas_zacatku }}
+                                    {% if form.cas_zacatku.errors %}
+                                        <div class="error-feedback">
+                                            {% for error in form.cas_zacatku.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.cas_konce.id_for_label }}" class="form-label">Konec</label>
+                                    {{ form.cas_konce }}
+                                    {% if form.cas_konce.errors %}
+                                        <div class="error-feedback">
+                                            {% for error in form.cas_konce.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-hint">Vyberte čas začátku a konce rezervace</div>
+                        </div>
+                        
+                        {% if user.is_staff %}
+                            <div class="form-group">
+                                <label for="{{ form.uzivatel.id_for_label }}">Uživatel</label>
+                                {{ form.uzivatel }}
+                                {% if form.uzivatel.errors %}
+                                    <div class="error-feedback">
+                                        {% for error in form.uzivatel.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-hint">Pouze pro administrátory: vyberte uživatele, pro kterého vytváříte rezervaci</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.stav.id_for_label }}">Stav rezervace</label>
+                                {{ form.stav }}
+                                {% if form.stav.errors %}
+                                    <div class="error-feedback">
+                                        {% for error in form.stav.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="form-check">
+                                    {{ form.zaplaceno }}
+                                    <label class="form-check-label" for="{{ form.zaplaceno.id_for_label }}">
+                                        Zaplaceno
+                                    </label>
+                                </div>
+                                {% if form.zaplaceno.errors %}
+                                    <div class="error-feedback">
+                                        {% for error in form.zaplaceno.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.sleva.id_for_label }}">Sleva (Kč)</label>
+                                {{ form.sleva }}
+                                {% if form.sleva.errors %}
+                                    <div class="error-feedback">
+                                        {% for error in form.sleva.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-hint">Zadejte slevu v Kč (volitelné)</div>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="form-group">
+                            <label for="{{ form.poznamka.id_for_label }}">Poznámka</label>
+                            {{ form.poznamka }}
+                            {% if form.poznamka.errors %}
+                                <div class="error-feedback">
+                                    {% for error in form.poznamka.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-hint">Volitelně můžete přidat poznámku k rezervaci</div>
+                        </div>
+                        
+                        <div class="rezervace-summary" id="rezervace-summary">
+                            <h5 class="summary-title">Souhrn rezervace</h5>
+                            <div id="summary-content">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Vyplňte všechny údaje pro zobrazení ceny
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <!-- Dostupné časové sloty -->
+                <div class="form-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Dostupné časy</h5>
+                    </div>
+                    <div class="card-body" id="dostupne-sloty">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Vyberte hřiště a datum pro zobrazení dostupných časů
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informace o hřišti -->
+                <div class="form-card" id="hriste-info" style="display: none;">
+                    <div class="card-header">
+                        <h5 class="mb-0">Informace o hřišti</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="hriste-info-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 d-flex justify-content-between">
+            <a href="{% if form.instance.id %}{% url 'rezervace_detail' form.instance.id %}{% else %}{% url 'rezervace' %}{% endif %}" class="btn btn-outline-secondary btn-form">
+                <i class="fas fa-times me-2"></i>Zrušit
+            </a>
+            <button type="submit" class="btn btn-primary btn-form">
+                <i class="fas fa-save me-2"></i>
+                {% if form.instance.id %}Uložit změny{% else %}Vytvořit rezervaci{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Datepicker a Timepicker JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/cs.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializace Select2 pro dropdown seznamy
+        $('.select2').select2({
+            width: '100%',
+            placeholder: 'Vyberte...'
+        });
+        
+        // Inicializace Flatpickr pro výběr data
+        flatpickr("#{{ form.datum.id_for_label }}", {
+            locale: "cs",
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            disableMobile: true
+        });
+        
+        // Inicializace Flatpickr pro výběr času
+        flatpickr("#{{ form.cas_zacatku.id_for_label }}", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            minuteIncrement: 30,
+            disableMobile: true
+        });
+        
+        flatpickr("#{{ form.cas_konce.id_for_label }}", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            minuteIncrement: 30,
+            disableMobile: true
+        });
+        
+        // Funkce pro aktualizaci dostupných časových slotů
+        function updateDostupneSloty() {
+            const hristeId = $("#{{ form.hriste.id_for_label }}").val();
+            const datum = $("#{{ form.datum.id_for_label }}").val();
+            
+            if (!hristeId || !datum) {
+                return;
+            }
+            
+            // Zde by byl AJAX dotaz na server pro získání dostupných časů
+            // Příklad:
+            $.ajax({
+                url: "{% url 'dostupne_casy' %}",
+                data: {
+                    hriste_id: hristeId,
+                    datum: datum
+                },
+                success: function(data) {
+                    if (data.success) {
+                        let htmlContent = '<div class="d-flex flex-wrap">';
+                        
+                        data.dostupne_sloty.forEach(function(slot) {
+                            const cssClass = slot.dostupny ? 'time-slot' : 'time-slot unavailable';
+                            htmlContent += `<div class="${cssClass}" data-start="${slot.start}" data-end="${slot.end}">
+                                ${slot.start} - ${slot.end}
+                            </div>`;
+                        });
+                        
+                        htmlContent += '</div>';
+                        $("#dostupne-sloty").html(htmlContent);
+                        
+                        // Přidání posluchačů událostí pro kliknutí na časový slot
+                        $('.time-slot:not(.unavailable)').click(function() {
+                            $('.time-slot').removeClass('selected');
+                            $(this).addClass('selected');
+                            
+                            // Nastavení časů ve formuláři
+                            $("#{{ form.cas_zacatku.id_for_label }}").val($(this).data('start'));
+                            $("#{{ form.cas_konce.id_for_label }}").val($(this).data('end'));
+                            
+                            // Aktualizace souhrnu rezervace
+                            updateRezervaceSummary();
+                        });
+                    } else {
+                        $("#dostupne-sloty").html('<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Nepodařilo se načíst dostupné časy</div>');
+                    }
+                },
+                error: function() {
+                    $("#dostupne-sloty").html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Chyba při načítání dostupných časů</div>');
+                }
+            });
+        }
+        
+        // Funkce pro aktualizaci informací o hřišti
+        function updateHristeInfo() {
+            const hristeId = $("#{{ form.hriste.id_for_label }}").val();
+            
+            if (!hristeId) {
+                $("#hriste-info").hide();
+                return;
+            }
+            
+            // Zde by byl AJAX dotaz na server pro získání informací o hřišti
+            // Příklad:
+            $.ajax({
+                url: "{% url 'hriste_info' %}",
+                data: {
+                    hriste_id: hristeId
+                },
+                success: function(data) {
+                    if (data.success) {
+                        let htmlContent = `
+                            <h5>${data.hriste.nazev}</h5>
+                            <p><strong>Adresa:</strong> ${data.hriste.adresa}</p>
+                            <p><strong>Typ:</strong> ${data.hriste.typ}</p>
+                            <p><strong>Povrch:</strong> ${data.hriste.povrch}</p>
+                            <p><strong>Cena za hodinu:</strong> ${data.hriste.cena} Kč</p>
+                        `;
+                        
+                        if (data.hriste.pravidla) {
+                            htmlContent += `
+                                <div class="alert alert-light mt-3">
+                                    <h6 class="mb-2">Pravidla hřiště:</h6>
+                                    <p class="mb-0">${data.hriste.pravidla}</p>
+                                </div>
+                            `;
+                        }
+                        
+                        $("#hriste-info-content").html(htmlContent);
+                        $("#hriste-info").show();
+                    } else {
+                        $("#hriste-info").hide();
+                    }
+                },
+                error: function() {
+                    $("#hriste-info").hide();
+                }
+            });
+        }
+        
+        // Funkce pro aktualizaci souhrnu rezervace
+        function updateRezervaceSummary() {
+            const hristeId = $("#{{ form.hriste.id_for_label }}").val();
+            const datum = $("#{{ form.datum.id_for_label }}").val();
+            const casZacatku = $("#{{ form.cas_zacatku.id_for_label }}").val();
+            const casKonce = $("#{{ form.cas_konce.id_for_label }}").val();
+            
+            if (!hristeId || !datum || !casZacatku || !casKonce) {
+                $("#summary-content").html('<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Vyplňte všechny údaje pro zobrazení ceny</div>');
+                return;
+            }
+            
+            // Zde by byl AJAX dotaz na server pro výpočet ceny
+            // Příklad:
+            $.ajax({
+                url: "{% url 'vypocet_ceny' %}",
+                data: {
+                    hriste_id: hristeId,
+                    datum: datum,
+                    cas_zacatku: casZacatku,
+                    cas_konce: casKonce
+                },
+                success: function(data) {
+                    if (data.success) {
+                        let htmlContent = `
+                            <div class="summary-row">
+                                <span>Hřiště:</span>
+                                <span>${data.hriste_nazev}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Datum:</span>
+                                <span>${data.datum_formatted}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Čas:</span>
+                                <span>${data.cas_zacatku} - ${data.cas_konce}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Délka rezervace:</span>
+                                <span>${data.pocet_hodin} hod</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Cena za hodinu:</span>
+                                <span>${data.cena_za_hodinu} Kč</span>
+                            </div>
+                        `;
+                        
+                        if (data.sleva > 0) {
+                            htmlContent += `
+                                <div class="summary-row">
+                                    <span>Základní cena:</span>
+                                    <span>${data.zakladni_cena} Kč</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Sleva:</span>
+                                    <span>-${data.sleva} Kč</span>
+                                </div>
+                            `;
+                        }
+                        
+                        htmlContent += `
+                            <div class="summary-row summary-total">
+                                <span>Celková cena:</span>
+                                <span>${data.celkova_cena} Kč</span>
+                            </div>
+                        `;
+                        
+                        $("#summary-content").html(htmlContent);
+                    } else {
+                        $("#summary-content").html('<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>' + (data.message || 'Nepodařilo se vypočítat cenu') + '</div>');
+                    }
+                },
+                error: function() {
+                    $("#summary-content").html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Chyba při výpočtu ceny</div>');
+                }
+            });
+        }
+        
+        // Obsluha změn vstupních polí
+        $("#{{ form.hriste.id_for_label }}").change(function() {
+            updateHristeInfo();
+            updateDostupneSloty();
+        });
+        
+        $("#{{ form.datum.id_for_label }}").change(function() {
+            updateDostupneSloty();
+        });
+        
+        $("#{{ form.cas_zacatku.id_for_label }}, #{{ form.cas_konce.id_for_label }}").change(function() {
+            updateRezervaceSummary();
+        });
+        
+        // Počáteční inicializace, pokud jsou některá pole již vyplněna (např. při úpravě rezervace)
+        if ($("#{{ form.hriste.id_for_label }}").val()) {
+            updateHristeInfo();
+        }
+        
+        if ($("#{{ form.hriste.id_for_label }}").val() && $("#{{ form.datum.id_for_label }}").val()) {
+            updateDostupneSloty();
+        }
+        
+        if ($("#{{ form.hriste.id_for_label }}").val() && $("#{{ form.datum.id_for_label }}").val() && 
+            $("#{{ form.cas_zacatku.id_for_label }}").val() && $("#{{ form.cas_konce.id_for_label }}").val()) {
+            updateRezervaceSummary();
+        }
+    });
+</script>
+{% endblock %} 

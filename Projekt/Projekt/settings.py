@@ -137,11 +137,22 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-DEFAULT_FROM_EMAIL = 'noreply@sportoviste.cz'
+# Email settings
+# For development, use the console backend to see emails in the console
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'noreply@sportoviste.cz'
+else:
+    # For production
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    
+    # These should be set in environment variables in production
+    # You need to set up an app password in your Google account:
+    # https://support.google.com/mail/answer/185833?hl=en
+    EMAIL_HOST_USER = 'your-email@gmail.com'  # Set this to your Gmail address
+    EMAIL_HOST_PASSWORD = 'your-app-password'  # Set this to your app password
+    
+    DEFAULT_FROM_EMAIL = 'noreply@sportoviste.cz'

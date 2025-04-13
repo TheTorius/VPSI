@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detail rezervace #{{ rezervace.id }}{% endblock %}
+
+{% block content %}
+<style>
+    .section-header {
+        background-color: #41644A;
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .detail-card {
+        border: none;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 25px;
+    }
+    
+    .detail-card .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 20px 25px;
+    }
+    
+    .detail-card .card-body {
+        padding: 25px;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+    
+    .detail-value {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+    
+    .status-badge {
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+        border-radius: 50px;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+    
+    .status-pending {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .status-confirmed {
+        background-color: #41644A;
+        color: white;
+    }
+    
+    .status-canceled {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .status-completed {
+        background-color: #0d6efd;
+        color: white;
+    }
+    
+    .price-box {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    .price-total {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #41644A;
+    }
+    
+    .price-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+    
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    
+    .price-label {
+        color: #6c757d;
+    }
+    
+    .action-buttons {
+        margin-top: 30px;
+    }
+    
+    .action-buttons .btn {
+        padding: 12px 25px;
+        font-weight: 500;
+        margin-right: 10px;
+        border-radius: 8px;
+    }
+    
+    .notes-section {
+        margin-top: 20px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    
+    .notes-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+    
+    .map-container {
+        height: 300px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container my-5">
+    {% if messages %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Navigace zpět -->
+    <div class="mb-4">
+        <a href="{% url 'rezervace' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Zpět na seznam
+        </a>
+    </div>
+
+    <!-- Hlavička stránky -->
+    <div class="section-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="display-5 fw-bold mb-0">
+                <i class="fas fa-calendar-check me-3"></i>
+                Detail rezervace #{{ rezervace.id }}
+            </h1>
+            <div>
+                {% if rezervace.stav == 'PENDING' %}
+                    <span class="status-badge status-pending">
+                        <i class="fas fa-clock me-1"></i>Čeká na potvrzení
+                    </span>
+                {% elif rezervace.stav == 'CONFIRMED' %}
+                    <span class="status-badge status-confirmed">
+                        <i class="fas fa-check-circle me-1"></i>Potvrzeno
+                    </span>
+                {% elif rezervace.stav == 'CANCELED' %}
+                    <span class="status-badge status-canceled">
+                        <i class="fas fa-times-circle me-1"></i>Zrušeno
+                    </span>
+                {% elif rezervace.stav == 'COMPLETED' %}
+                    <span class="status-badge status-completed">
+                        <i class="fas fa-check-double me-1"></i>Dokončeno
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Levý sloupec - Detaily rezervace -->
+        <div class="col-lg-8">
+            <div class="detail-card">
+                <div class="card-header">
+                    <h5 class="mb-0">Detaily rezervace</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-label">Hřiště</div>
+                            <div class="detail-value">{{ rezervace.hriste.nazev }}</div>
+                            
+                            <div class="detail-label">Datum</div>
+                            <div class="detail-value">{{ rezervace.datum|date:"d.m.Y" }}</div>
+                            
+                            <div class="detail-label">Čas</div>
+                            <div class="detail-value">{{ rezervace.cas_zacatku|time:"H:i" }} - {{ rezervace.cas_konce|time:"H:i" }}</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="detail-label">Uživatel</div>
+                            <div class="detail-value">
+                                {% if rezervace.uzivatel == user %}
+                                    <strong>Já</strong> ({{ rezervace.uzivatel.user.username }})
+                                {% else %}
+                                    {{ rezervace.uzivatel.jmeno }} {{ rezervace.uzivatel.prijmeni|default:rezervace.uzivatel.user.username }}
+                                {% endif %}
+                            </div>
+                            
+                            <div class="detail-label">Vytvořeno</div>
+                            <div class="detail-value">{{ rezervace.created_at|date:"d.m.Y H:i" }}</div>
+                            
+                            <div class="detail-label">Aktualizováno</div>
+                            <div class="detail-value">{{ rezervace.updated_at|date:"d.m.Y H:i" }}</div>
+                        </div>
+                    </div>
+                    
+                    {% if rezervace.poznamka %}
+                        <div class="notes-section">
+                            <div class="notes-title">Poznámky</div>
+                            <div>{{ rezervace.poznamka|linebreaks }}</div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="price-box">
+                        <div class="price-title">Shrnutí platby</div>
+                        <div class="price-row">
+                            <span class="price-label">Základní cena ({{ rezervace.hriste.cena }} Kč/hod)</span>
+                            <span>{{ rezervace.zakladni_cena }} Kč</span>
+                        </div>
+                        {% if rezervace.sleva > 0 %}
+                            <div class="price-row">
+                                <span class="price-label">Sleva</span>
+                                <span>-{{ rezervace.sleva }} Kč</span>
+                            </div>
+                        {% endif %}
+                        <hr>
+                        <div class="price-row">
+                            <span class="price-label">Celková cena</span>
+                            <span class="price-total">{{ rezervace.cena }} Kč</span>
+                        </div>
+                        {% if rezervace.zaplaceno %}
+                            <div class="alert alert-success mt-3 mb-0">
+                                <i class="fas fa-check-circle me-2"></i>Zaplaceno
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning mt-3 mb-0">
+                                <i class="fas fa-exclamation-circle me-2"></i>Čeká na platbu
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="action-buttons">
+                        {% if user.is_staff or rezervace.uzivatel == user %}
+                            {% if rezervace.stav != 'CANCELED' and rezervace.stav != 'COMPLETED' %}
+                                <a href="{% url 'rezervace_update' rezervace.id %}" class="btn btn-success">
+                                    <i class="fas fa-edit me-2"></i>Upravit
+                                </a>
+                                <a href="{% url 'zrusit_rezervaci' rezervace.id %}" class="btn btn-danger">
+                                    <i class="fas fa-trash me-2"></i>Zrušit rezervaci
+                                </a>
+                            {% endif %}
+                            
+                            {% if user.is_staff and rezervace.stav == 'PENDING' %}
+                                <a href="{% url 'rezervace_confirm' rezervace.id %}" class="btn btn-primary">
+                                    <i class="fas fa-check me-2"></i>Potvrdit
+                                </a>
+                            {% endif %}
+                            
+                            {% if user.is_staff and rezervace.stav == 'CONFIRMED' and not rezervace.zaplaceno %}
+                                <a href="{% url 'rezervace_mark_paid' rezervace.id %}" class="btn btn-warning">
+                                    <i class="fas fa-money-bill me-2"></i>Označit jako zaplaceno
+                                </a>
+                            {% endif %}
+                            
+                            {% if user.is_staff and rezervace.stav == 'CONFIRMED' %}
+                                <a href="{% url 'rezervace_complete' rezervace.id %}" class="btn btn-info">
+                                    <i class="fas fa-check-double me-2"></i>Dokončit
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pravý sloupec - Umístění hřiště -->
+        <div class="col-lg-4">
+            <div class="detail-card">
+                <div class="card-header">
+                    <h5 class="mb-0">Informace o hřišti</h5>
+                </div>
+                <div class="card-body">
+                    <div class="detail-label">Adresa</div>
+                    <div class="detail-value">{{ rezervace.hriste.adresa }}</div>
+                    
+                    <div class="detail-label">Typ</div>
+                    <div class="detail-value">{{ rezervace.hriste.get_typ_display }}</div>
+                    
+                    <div class="detail-label">Povrch</div>
+                    <div class="detail-value">{{ rezervace.hriste.get_povrch_display }}</div>
+                    
+                    {% if rezervace.hriste.pravidla %}
+                        <div class="notes-section">
+                            <div class="notes-title">Pravidla hřiště</div>
+                            <div>{{ rezervace.hriste.pravidla|linebreaks }}</div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="map-container mt-4">
+                        <!-- Zde by se načetla mapa s polohou hřiště, např. Google Maps -->
+                        <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ rezervace.hriste.adresa|urlencode }}&zoom=15&size=400x300&markers=color:red%7C{{ rezervace.hriste.adresa|urlencode }}&key=YOUR_API_KEY" class="img-fluid" alt="Mapa hřiště">
+                    </div>
+                    
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ rezervace.hriste.adresa|urlencode }}" class="btn btn-outline-primary w-100" target="_blank">
+                        <i class="fas fa-map-marker-alt me-2"></i>Otevřít v Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

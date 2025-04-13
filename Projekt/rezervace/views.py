@@ -225,20 +225,32 @@ def reserve_multiple(request):
                 cas_konce = cas_konce_dt.time()
                 textmassage.__add__(f"Vaše rezervace na {hriste} dne {datum.strftime('%d.%m.%Y')} na hodinu od {cas_zacatku} do {cas_konce} byla úspěšně vytvořená")
 
-            send_mail(
-                subject="Vaše rezervace byly vytvořeny",
-                message=textmassage,
-                from_email=None,  # použije DEFAULT_FROM_EMAIL
-                recipient_list=[uzivatel.email],
-                fail_silently=False,
-            )
+            # Try to send email but don't fail the whole process if email sending fails
+            try:
+                send_mail(
+                    subject="Vaše rezervace byly vytvořeny",
+                    message=textmassage,
+                    from_email=None,  # použije DEFAULT_FROM_EMAIL
+                    recipient_list=[uzivatel.email],
+                    fail_silently=True,  # Set to True to prevent raising exceptions
+                )
+            except Exception as email_error:
+                # Log the error but continue with the reservation process
+                print(f"Email sending error: {str(email_error)}")
+                # You might want to log this to a file or monitoring system in production
 
             # Save reservations
             for rezervace in created_reservations:
                 rezervace.save()
 
+            # Return the first reservation's ID so the frontend can redirect to detail
+            first_reservation_id = created_reservations[0].id if created_reservations else None
             
-            return JsonResponse({'success': True, 'message': 'Rezervace úspěšně vytvořeny.'})
+            return JsonResponse({
+                'success': True, 
+                'message': 'Rezervace úspěšně vytvořeny.',
+                'reservation_id': first_reservation_id
+            })
 
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Chyba: {str(e)}'})
@@ -284,14 +296,20 @@ def zrusit_rezervaci(request, rez_id):
         datum = rezervace.datum
         hriste = rezervace.hriste.nazev
 
-        # Odeslání e-mailu
-        send_mail(
-            subject="Vaše rezervace byla zrušena",
-            message=f"Dobrý den {uzivatel.jmeno},\n\nVaše rezervace na {hriste} dne {datum.strftime('%d.%m.%Y')} byla úspěšně zrušena.",
-            from_email=None,  # použije DEFAULT_FROM_EMAIL
-            recipient_list=[uzivatel.email],
-            fail_silently=False,
-        )
+        # Try to send email but don't fail the whole cancellation process if email sending fails
+        try:
+            send_mail(
+                subject="Vaše rezervace byla zrušena",
+                message=f"Dobrý den {uzivatel.jmeno},\n\nVaše rezervace na {hriste} dne {datum.strftime('%d.%m.%Y')} byla úspěšně zrušena.",
+                from_email=None,  # použije DEFAULT_FROM_EMAIL
+                recipient_list=[uzivatel.email],
+                fail_silently=True,  # Set to True to prevent raising exceptions
+            )
+        except Exception as email_error:
+            # Log the error but continue with the cancellation process
+            print(f"Email sending error: {str(email_error)}")
+            # You might want to log this to a file or monitoring system in production
+            
         rezervace.delete()
 
         news = Novinky.objects.all().order_by('-vytvoreno')[:4]
@@ -316,17 +334,22 @@ def zrusit_rezervaci_zapujcky(request, rez_id):
         mnozstvi = rezervace.mnozstvi
 
         # Odeslání e-mailu
-        send_mail(
-            subject="Vaše zápůjčka byla zrušena",
-            message=(
-                f"Dobrý den {uzivatel.jmeno},\n\n"
-                f"Vaše zápůjčka předmětu \"{predmet}\" (množství: {mnozstvi}) "
-                f"k rezervaci hřiště {hriste} dne {datum.strftime('%d.%m.%Y')} byla úspěšně zrušena."
-            ),
-            from_email=None,  # použije DEFAULT_FROM_EMAIL
-            recipient_list=[uzivatel.email],
-            fail_silently=False,
-        )
+        try:
+            send_mail(
+                subject="Vaše zápůjčka byla zrušena",
+                message=(
+                    f"Dobrý den {uzivatel.jmeno},\n\n"
+                    f"Vaše zápůjčka předmětu \"{predmet}\" (množství: {mnozstvi}) "
+                    f"k rezervaci hřiště {hriste} dne {datum.strftime('%d.%m.%Y')} byla úspěšně zrušena."
+                ),
+                from_email=None,  # použije DEFAULT_FROM_EMAIL
+                recipient_list=[uzivatel.email],
+                fail_silently=True,  # Set to True to prevent raising exceptions
+            )
+        except Exception as email_error:
+            # Log the error but continue with the cancellation process
+            print(f"Email sending error: {str(email_error)}")
+            # You might want to log this to a file or monitoring system in production
 
         rezervace.delete()
 
@@ -627,4 +650,175 @@ def hriste_public_list(request):
     return render(request, 'rezervace/hriste_public_list.html', {
         'hriste_list': hriste_list,
         'hriste_typy': hriste_typy
+    })
+
+@login_required
+def rezervace_detail(request, rez_id):
+    """View to show detailed information about a reservation"""
+    # Check if the user has access to this reservation (is owner or admin)
+    try:
+        rezervace = Rezervace.objects.get(id=rez_id)
+        if rezervace.uzivatel.user != request.user and not is_admin(request.user):
+            messages.error(request, "Nemáte oprávnění zobrazit tuto rezervaci.")
+            return redirect('rezervace')
+            
+        zapujcky = RezervaceZapujcky.objects.filter(rezervace=rezervace)
+        
+        return render(request, 'rezervace/rezervace_detail.html', {
+            'rezervace': rezervace,
+            'zapujcky': zapujcky
+        })
+    except Rezervace.DoesNotExist:
+        messages.error(request, "Požadovaná rezervace neexistuje.")
+        return redirect('rezervace')
+
+@login_required
+def rezervace_update(request, rez_id):
+    """View to update an existing reservation"""
+    try:
+        # Get the reservation 
+        if is_admin(request.user):
+            rezervace = get_object_or_404(Rezervace, id=rez_id)
+        else:
+            rezervace = get_object_or_404(Rezervace, id=rez_id, uzivatel__user=request.user)
+        
+        # Check if reservation is in the future and more than 24 hours away
+        now = timezone.now()
+        rezervace_datetime = datetime.combine(rezervace.datum, rezervace.cas_zacatku)
+        rezervace_datetime = timezone.make_aware(rezervace_datetime)
+        
+        # For regular users, enforce the 1-day rule
+        if not is_admin(request.user) and (rezervace_datetime - now) < timedelta(days=1):
+            messages.error(request, "Rezervaci lze upravit pouze více než 24 hodin před jejím začátkem.")
+            return redirect('rezervace_detail', rez_id=rez_id)
+            
+        # Process form submission
+        if request.method == 'POST':
+            # Validate form data
+            try:
+                datum_str = request.POST.get('datum')
+                cas_zacatku_str = request.POST.get('cas_zacatku')
+                cas_konce_str = request.POST.get('cas_konce')
+                
+                # Parse the date and times
+                datum = datetime.strptime(datum_str, '%Y-%m-%d').date()
+                cas_zacatku = datetime.strptime(cas_zacatku_str, '%H:%M').time()
+                cas_konce = datetime.strptime(cas_konce_str, '%H:%M').time()
+                
+                # Update reservation
+                rezervace.datum = datum
+                rezervace.cas_zacatku = cas_zacatku
+                rezervace.cas_konce = cas_konce
+                
+                # Update description
+                if 'popis' in request.POST:
+                    rezervace.popis = request.POST.get('popis')
+                
+                # Update court if user is staff
+                if is_admin(request.user) and 'hriste' in request.POST:
+                    hriste_id = request.POST.get('hriste')
+                    try:
+                        hriste = Hriste.objects.get(id=hriste_id, aktivni=True)
+                        rezervace.hriste = hriste
+                    except Hriste.DoesNotExist:
+                        messages.error(request, "Vybrané hřiště neexistuje nebo není aktivní.")
+                        dostupna_hriste = Hriste.objects.filter(aktivni=True)
+                        return render(request, 'rezervace/rezervace_update.html', {
+                            'rezervace': rezervace,
+                            'dostupna_hriste': dostupna_hriste
+                        })
+                
+                # Update status if user is staff
+                if is_admin(request.user) and 'stav' in request.POST:
+                    stav = request.POST.get('stav')
+                    if stav in ['nova', 'potvrzena', 'zrusena']:
+                        rezervace.stav = stav
+                
+                # Check for conflicts (skip the current reservation when checking)
+                conflicts = Rezervace.objects.filter(
+                    hriste=rezervace.hriste,
+                    datum=datum,
+                    cas_zacatku__lt=cas_konce,
+                    cas_konce__gt=cas_zacatku
+                ).exclude(id=rez_id)
+                
+                if conflicts.exists():
+                    messages.error(request, "Vybraný termín koliduje s jinou rezervací.")
+                    dostupna_hriste = Hriste.objects.filter(aktivni=True)
+                    return render(request, 'rezervace/rezervace_update.html', {
+                        'rezervace': rezervace,
+                        'dostupna_hriste': dostupna_hriste
+                    })
+                
+                # Save changes
+                rezervace.save()
+                
+                # Try to send email notification
+                try:
+                    send_mail(
+                        subject="Vaše rezervace byla upravena",
+                        message=f"Dobrý den {rezervace.uzivatel.jmeno},\n\nVaše rezervace na {rezervace.hriste.nazev} byla upravena na {datum.strftime('%d.%m.%Y')} od {cas_zacatku} do {cas_konce}.",
+                        from_email=None,
+                        recipient_list=[rezervace.uzivatel.email],
+                        fail_silently=True,
+                    )
+                except Exception as email_error:
+                    print(f"Email sending error: {str(email_error)}")
+                
+                messages.success(request, "Rezervace byla úspěšně upravena.")
+                return redirect('rezervace_detail', rez_id=rez_id)
+                
+            except ValueError:
+                messages.error(request, "Neplatný formát data nebo času.")
+                dostupna_hriste = Hriste.objects.filter(aktivni=True)
+                return render(request, 'rezervace/rezervace_update.html', {
+                    'rezervace': rezervace,
+                    'dostupna_hriste': dostupna_hriste
+                })
+        
+        # Display form
+        dostupna_hriste = Hriste.objects.filter(aktivni=True)
+        return render(request, 'rezervace/rezervace_update.html', {
+            'rezervace': rezervace,
+            'dostupna_hriste': dostupna_hriste
+        })
+        
+    except Rezervace.DoesNotExist:
+        messages.error(request, "Požadovaná rezervace neexistuje.")
+        return redirect('rezervace')
+
+@login_required
+def admin_reservations(request):
+    """View for administrators to manage all reservations"""
+    # Check if user is admin
+    if not is_admin(request.user):
+        messages.error(request, "Tato stránka je přístupná pouze pro administrátory.")
+        return redirect('profile')
+    
+    # Get all reservations ordered by date, newest first
+    reservations = Rezervace.objects.all().order_by('-datum', '-cas_zacatku')
+    
+    # Filter by date, user or court if provided
+    datum = request.GET.get('datum')
+    user_id = request.GET.get('user_id')
+    hriste_id = request.GET.get('hriste_id')
+    
+    if datum:
+        reservations = reservations.filter(datum=datum)
+    if user_id:
+        reservations = reservations.filter(uzivatel__id=user_id)
+    if hriste_id:
+        reservations = reservations.filter(hriste__id=hriste_id)
+    
+    # Get all users and courts for filter dropdowns
+    users = Uzivatele.objects.all().order_by('prijmeni', 'jmeno')
+    courts = Hriste.objects.all().order_by('nazev')
+    
+    return render(request, 'rezervace/admin_reservations.html', {
+        'reservations': reservations,
+        'users': users,
+        'courts': courts,
+        'vybrane_datum': datum if datum else '',
+        'vybrany_user': int(user_id) if user_id else None,
+        'vybrane_hriste': int(hriste_id) if hriste_id else None
     })
