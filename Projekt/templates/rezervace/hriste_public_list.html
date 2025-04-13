@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sportoviště{% endblock %}
+
+{% block content %}
+<style>
+    .card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .section-header {
+        background-color: #41644A;
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: #41644A;
+        border-color: #41644A;
+        transition: all 0.3s ease;
+        border-radius: 50px;
+        padding: 8px 25px;
+        font-weight: 500;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary:hover {
+        background-color: #355035;
+        border-color: #355035;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .facility-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .facility-card .card-body {
+        flex: 1 0 auto;
+    }
+
+    .facility-card .card-footer {
+        background: transparent;
+        border-top: 1px solid rgba(0,0,0,0.1);
+        padding-top: 15px;
+    }
+</style>
+
+<div class="container my-5">
+    {% if messages %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Fancy Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="section-header">
+                <h1 class="display-5 fw-bold mb-2"><i class="fas fa-volleyball-ball me-3"></i>Naše Sportoviště</h1>
+                <p class="lead mb-0">Prohlédněte si naše sportoviště a ceník</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card p-3">
+                <form method="GET" class="row align-items-end">
+                    <div class="col-md-4 mb-2 mb-md-0">
+                        <label for="typ" class="form-label">Typ sportoviště</label>
+                        <select name="typ" id="typ" class="form-select">
+                            <option value="">Všechny typy</option>
+                            {% for typ in hriste_typy %}
+                                <option value="{{ typ }}" {% if request.GET.typ == typ %}selected{% endif %}>{{ typ }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2 mb-md-0">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i>Filtrovat
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'hriste' %}" class="btn btn-success w-100">
+                            <i class="fas fa-calendar-check me-2"></i>Rezervovat
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if hriste_list %}
+            {% for hriste in hriste_list %}
+                <div class="col-md-4 mb-4">
+                    <div class="card facility-card">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ hriste.nazev }}</h3>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ hriste.typ }}</h6>
+                            <p class="card-text">{{ hriste.popis|truncatechars:150 }}</p>
+                            <div class="d-flex justify-content-between">
+                                <p class="card-text"><strong>Cena za hodinu:</strong></p>
+                                <p class="card-text text-success fw-bold">{{ hriste.cena_hodina }} Kč</p>
+                            </div>
+                            <p class="card-text"><strong>Kapacita:</strong> {{ hriste.kapacita }} osob</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'hriste' %}?typ_hriste={{ hriste.typ }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-calendar-alt me-2"></i>Rezervovat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="card p-5 text-center">
+                    <h3 class="text-muted">Žádná sportoviště nebyla nalezena</h3>
+                    <p>Zkuste změnit filtry nebo se vraťte později.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

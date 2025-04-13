@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .forms import RegistrationForm,LoginForm,SignUpForm,UserUpdateForm
+from .forms import RegistrationForm,LoginForm,SignUpForm,UserUpdateForm, HristeForm
 from django.contrib.auth import login,authenticate,logout,update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -23,6 +23,21 @@ def home(request):
 
 @login_required
 def profile_view(request):
+    # Check if user has a related Uzivatele object, create one if not
+    try:
+        request.user.uzivatele
+    except:
+        # If the user doesn't have a uzivatele, create one
+        from .models import Uzivatele, TypZakaznika
+        Uzivatele.objects.create(
+            user=request.user,
+            jmeno=request.user.username,
+            prijmeni="",
+            email=request.user.email or f"{request.user.username}@example.com",
+            telefon="",
+            typ_zakaznika=TypZakaznika.objects.get_or_create(typ_zakaznika='new', defaults={'sleva': 0})[0]
+        )
+        
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=request.user.uzivatele)
         form2 = PasswordChangeForm(request.user, request.POST)
@@ -490,3 +505,126 @@ def logout_view(request):
 def novinky(request):
     news = Novinky.objects.all().order_by('-vytvoreno')
     return render(request, 'rezervace/novinky.html', {'news': news})
+
+def is_admin(user):
+    """Helper function to check if user is an admin"""
+    try:
+        return user.is_authenticated and (user.is_staff or user.is_superuser)
+    except:
+        return False
+
+@login_required
+def hriste_management(request):
+    """View to list all sports facilities for admin management"""
+    # Check if user is admin
+    if not is_admin(request.user):
+        messages.error(request, "Tato stránka je přístupná pouze pro administrátory.")
+        return redirect('profile')
+    
+    # Get all sports facilities
+    hriste_list = Hriste.objects.all().order_by('nazev')
+    
+    return render(request, 'rezervace/hriste_management.html', {
+        'hriste_list': hriste_list
+    })
+
+@login_required
+def hriste_create(request):
+    """View to create a new sports facility"""
+    # Check if user is admin
+    if not is_admin(request.user):
+        messages.error(request, "Tato funkce je přístupná pouze pro administrátory.")
+        return redirect('profile')
+    
+    if request.method == 'POST':
+        form = HristeForm(request.POST)
+        if form.is_valid():
+            hriste = form.save()
+            messages.success(request, f"Sportoviště {hriste.nazev} bylo úspěšně vytvořeno.")
+            return redirect('hriste_management')
+    else:
+        form = HristeForm()
+    
+    return render(request, 'rezervace/hriste_form.html', {
+        'form': form
+    })
+
+@login_required
+def hriste_update(request, pk):
+    """View to update an existing sports facility"""
+    # Check if user is admin
+    if not is_admin(request.user):
+        messages.error(request, "Tato funkce je přístupná pouze pro administrátory.")
+        return redirect('profile')
+    
+    hriste = get_object_or_404(Hriste, pk=pk)
+    
+    if request.method == 'POST':
+        form = HristeForm(request.POST, instance=hriste)
+        if form.is_valid():
+            hriste = form.save()
+            messages.success(request, f"Sportoviště {hriste.nazev} bylo úspěšně aktualizováno.")
+            return redirect('hriste_management')
+    else:
+        form = HristeForm(instance=hriste)
+    
+    return render(request, 'rezervace/hriste_form.html', {
+        'form': form,
+        'hriste': hriste
+    })
+
+@login_required
+def hriste_detail(request, pk):
+    """View to show detailed information about a sports facility"""
+    # Check if user is admin
+    if not is_admin(request.user):
+        messages.error(request, "Tato stránka je přístupná pouze pro administrátory.")
+        return redirect('profile')
+    
+    hriste = get_object_or_404(Hriste, pk=pk)
+    
+    return render(request, 'rezervace/hriste_detail.html', {
+        'hriste': hriste
+    })
+
+@login_required
+def hriste_delete(request, pk):
+    """View to delete a sports facility"""
+    # Check if user is admin
+    if not is_admin(request.user):
+        messages.error(request, "Tato funkce je přístupná pouze pro administrátory.")
+        return redirect('profile')
+    
+    hriste = get_object_or_404(Hriste, pk=pk)
+    
+    if request.method == 'POST':
+        nazev = hriste.nazev
+        hriste.delete()
+        messages.success(request, f"Sportoviště {nazev} bylo úspěšně smazáno.")
+        return redirect('hriste_management')
+    
+    return render(request, 'rezervace/hriste_delete.html', {
+        'hriste': hriste
+    })
+
+@login_required
+def hriste_public_list(request):
+    """View to show a list of active sports facilities for all users"""
+    # Get active sports facilities
+    hriste_list = Hriste.objects.filter(aktivni=True)
+    
+    # Apply filtering if set
+    typ = request.GET.get('typ', '')
+    if typ:
+        hriste_list = hriste_list.filter(typ=typ)
+    
+    # Order by name
+    hriste_list = hriste_list.order_by('nazev')
+    
+    # Get all court types for filter dropdown
+    hriste_typy = Hriste.objects.filter(aktivni=True).values_list('typ', flat=True).distinct()
+    
+    return render(request, 'rezervace/hriste_public_list.html', {
+        'hriste_list': hriste_list,
+        'hriste_typy': hriste_typy
+    })

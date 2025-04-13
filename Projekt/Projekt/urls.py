@@ -45,4 +45,14 @@ urlpatterns = [
     path("reserve/<int:court>/<str:hour>/", views.reserve_hour, name="reserve"),
     path("profile/",views.profile_view,name='profile'),
     path('novinky/', views.novinky, name='novinky'),
+    
+    # Správa sportovišť (pouze pro administrátory)
+    path('hriste-management/', views.hriste_management, name='hriste_management'),
+    path('hriste-management/vytvorit/', views.hriste_create, name='hriste_create'),
+    path('hriste-management/<int:pk>/', views.hriste_detail, name='hriste_detail'),
+    path('hriste-management/<int:pk>/upravit/', views.hriste_update, name='hriste_update'),
+    path('hriste-management/<int:pk>/smazat/', views.hriste_delete, name='hriste_delete'),
+    
+    # Veřejný přehled sportovišť (pro všechny uživatele)
+    path('sportoviste/', views.hriste_public_list, name='hriste_public_list'),
 ]

@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ hriste.nazev }} - Detail sportoviště{% endblock %}
+
+{% block content %}
+<style>
+    .card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .section-header {
+        background-color: #41644A;
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: #41644A;
+        border-color: #41644A;
+        transition: all 0.3s ease;
+        border-radius: 50px;
+        padding: 8px 25px;
+        font-weight: 500;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary:hover {
+        background-color: #355035;
+        border-color: #355035;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        transition: all 0.3s ease;
+        border-radius: 50px;
+        padding: 8px 25px;
+        font-weight: 500;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-danger:hover {
+        background-color: #bb2d3b;
+        border-color: #bb2d3b;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .detail-label {
+        font-weight: bold;
+        color: #555;
+    }
+    
+    .detail-value {
+        font-size: 1.1em;
+    }
+</style>
+
+<div class="container my-5">
+    {% if messages %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Fancy Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="section-header">
+                <h1 class="display-5 fw-bold mb-2">
+                    <i class="fas fa-volleyball-ball me-3"></i>{{ hriste.nazev }}
+                </h1>
+                <p class="lead mb-0">{{ hriste.typ }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card p-4 mb-4">
+                <div class="row mb-3">
+                    <div class="col-md-12 mb-4">
+                        <h3 class="mb-4 border-bottom pb-2">Informace o sportovišti</h3>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4 detail-label">Název:</div>
+                            <div class="col-sm-8 detail-value">{{ hriste.nazev }}</div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4 detail-label">Typ:</div>
+                            <div class="col-sm-8 detail-value">{{ hriste.typ }}</div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4 detail-label">Popis:</div>
+                            <div class="col-sm-8 detail-value">{{ hriste.popis }}</div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4 detail-label">Cena za hodinu:</div>
+                            <div class="col-sm-8 detail-value">{{ hriste.cena_hodina }} Kč</div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4 detail-label">Kapacita:</div>
+                            <div class="col-sm-8 detail-value">{{ hriste.kapacita }} osob</div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4 detail-label">Stav:</div>
+                            <div class="col-sm-8 detail-value">
+                                <span class="badge {% if hriste.aktivni %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ hriste.aktivni|yesno:"Aktivní,Neaktivní" }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'hriste_management' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Zpět na přehled
+                            </a>
+                            <div>
+                                <a href="{% url 'hriste_update' hriste.id %}" class="btn btn-primary me-2">
+                                    <i class="fas fa-edit me-2"></i>Upravit
+                                </a>
+                                <a href="{% url 'hriste_delete' hriste.id %}" class="btn btn-danger" 
+                                   onclick="return confirm('Opravdu chcete smazat toto sportoviště?');">
+                                    <i class="fas fa-trash me-2"></i>Smazat
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

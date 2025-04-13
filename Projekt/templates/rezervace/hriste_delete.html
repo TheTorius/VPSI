@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Smazat sportoviště{% endblock %}
+
+{% block content %}
+<style>
+    .card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-header {
+        background-color: #dc3545;
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        transition: all 0.3s ease;
+        border-radius: 50px;
+        padding: 8px 25px;
+        font-weight: 500;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-danger:hover {
+        background-color: #bb2d3b;
+        border-color: #bb2d3b;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+<div class="container my-5">
+    {% if messages %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Fancy Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="section-header">
+                <h1 class="display-5 fw-bold mb-2">
+                    <i class="fas fa-exclamation-triangle me-3"></i>Smazat sportoviště
+                </h1>
+                <p class="lead mb-0">Tato akce je nevratná</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card p-4 mb-4">
+                <h2 class="mb-4 text-center">Opravdu chcete smazat sportoviště "{{ hriste.nazev }}"?</h2>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Upozornění:</strong> Smazáním sportoviště dojde také ke smazání všech rezervací a souvisejících záznamů. Tuto akci nelze vrátit zpět.
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-4 fw-bold">Název:</div>
+                    <div class="col-sm-8">{{ hriste.nazev }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-4 fw-bold">Typ:</div>
+                    <div class="col-sm-8">{{ hriste.typ }}</div>
+                </div>
+                
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{% url 'hriste_management' %}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-arrow-left me-2"></i>Zrušit
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-trash me-2"></i>Potvrdit smazání
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
