@@ -229,7 +229,7 @@
             alert('Rezervace byla úspěšně vytvořena!');
             if (data.reservation_id) {
               // Přesměrování na detail rezervace
-              window.location.href = `/rezervace/${data.reservation_id}/`;
+              window.location.href = `/rezervace/${data.reservation_id}/zapujcky`;
             } else {
               // Fallback na stránku s rezervacemi
               window.location.href = '/rezervace/';
