@@ -133,7 +133,7 @@ def hriste(request):
         })
 
     context = {
-        'hours': hours,  # Now a list of {'start': 'HH:MM', 'end': 'HH:MM'}
+        'hours': hours,
         'courts_data': courts_data,
         'hriste_typy': hriste_typy,
         'vybrane_datum': datum.strftime('%Y-%m-%d'),
@@ -151,10 +151,13 @@ def reserve_multiple(request):
             datum_str = data.get('datum')
 
             # Validate datum
-            try:
-                datum = datetime.strptime(datum_str, '%Y-%m-%d').date()
-            except ValueError:
-                return JsonResponse({'success': False, 'message': 'Neplatný formát data.'})
+            if datum_str:
+                try:
+                    datum = datetime.strptime(datum_str, '%Y-%m-%d').date()
+                except ValueError:
+                    return JsonResponse({'success': False, 'message': 'Neplatný formát data.'})
+            else:
+                datum = datetime.now().date()
 
             # Get Uzivatele instance
             try:
