@@ -8,7 +8,7 @@ from .models import Uzivatele, TypZakaznika, Novinky, Zapujcky
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from .models import Rezervace, Hriste, RezervaceZapujcky
+from .models import Rezervace, Hriste, RezervaceZapujcky, SezoniCena, DenniCena
 from django.core.mail import send_mail
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -141,7 +141,7 @@ def hriste(request):
     }
     return render(request, 'rezervace/hriste.html', context)
 
-@csrf_exempt  # Remove if CSRF token is properly included
+@csrf_exempt
 @login_required
 def reserve_multiple(request):
     if request.method == 'POST':
@@ -197,6 +197,43 @@ def reserve_multiple(request):
                         'message': f'Hřiště {hriste.nazev} v čase {hour} je již obsazeno.'
                     })
 
+                # Calculate price
+                base_price = float(hriste.cena_hodina)
+
+                # Apply seasonal price increase (SezoniCena)
+                seasonal_increase = 0
+                seasonal_price = SezoniCena.objects.filter(
+                    mesic_start__lte=datum,
+                    mesic_konec__gte=datum
+                ).first()
+                if seasonal_price:
+                    seasonal_increase = seasonal_price.naviseni_ceny
+
+                # Apply daily price increase (DenniCena)
+                daily_increase = 0
+                daily_price = DenniCena.objects.filter(
+                    hodina_start__lte=cas_zacatku_dt,
+                    hodina_konec__gte=cas_zacatku_dt
+                ).first()
+                if daily_price:
+                    daily_increase = daily_price.naviseni_ceny
+
+                # Apply user discount (TypZakaznika)
+                user_discount = 0
+                if uzivatel.typ_zakaznika:  # Check if typ_zakaznika is not None
+                    user_discount = uzivatel.typ_zakaznika.sleva
+
+                # Validate percentages to prevent negative or excessive prices
+                seasonal_increase = min(max(seasonal_increase, 0), 100)
+                daily_increase = min(max(daily_increase, 0), 100)
+                user_discount = min(max(user_discount, 0), 100)
+
+                # Calculate final price
+                # First, apply seasonal and daily increases
+                price_with_increases = base_price * (1 + (seasonal_increase + daily_increase) / 100)
+                # Then, apply user discount
+                final_price = price_with_increases * (1 - user_discount / 100)
+
                 # Create reservation
                 rezervace = Rezervace(
                     uzivatel=uzivatel,
@@ -206,48 +243,45 @@ def reserve_multiple(request):
                     cas_konce=cas_konce,
                     stav='nova',
                     popis='',
-                    cena=float(hriste.cena_hodina),  # Use cena_hodina from Hriste
+                    cena=final_price,
                     vytvoreno=timezone.now(),
                 )
                 created_reservations.append(rezervace)
 
-            uzivatel=request.user.uzivatele
-
-            textmassage =f"Dobrý den {uzivatel.jmeno},\n\n"
-
-            for res in reservations:
+            # Email message construction
+            textmassage = f"Dobrý den {uzivatel.jmeno},\n\n"
+            for res, rezervace in zip(reservations, created_reservations):
                 hour = res['hour']
-
                 cas_zacatku = datetime.strptime(hour, '%H:%M').time()
-
                 cas_zacatku_dt = datetime.combine(datum, cas_zacatku)
                 cas_konce_dt = cas_zacatku_dt + timedelta(hours=1)
                 cas_konce = cas_konce_dt.time()
-                textmassage.__add__(f"Vaše rezervace na {hriste} dne {datum.strftime('%d.%m.%Y')} na hodinu od {cas_zacatku} do {cas_konce} byla úspěšně vytvořená")
+                textmassage += (
+                    f"Vaše rezervace na {rezervace.hriste} dne {datum.strftime('%d.%m.%Y')} "
+                    f"od {cas_zacatku} do {cas_konce} byla úspěšně vytvořena. Cena: {rezervace.cena:.2f} Kč\n"
+                )
 
-            # Try to send email but don't fail the whole process if email sending fails
+            # Try to send email
             try:
                 send_mail(
                     subject="Vaše rezervace byly vytvořeny",
                     message=textmassage,
-                    from_email=None,  # použije DEFAULT_FROM_EMAIL
+                    from_email=None,
                     recipient_list=[uzivatel.email],
-                    fail_silently=True,  # Set to True to prevent raising exceptions
+                    fail_silently=True,
                 )
             except Exception as email_error:
-                # Log the error but continue with the reservation process
                 print(f"Email sending error: {str(email_error)}")
-                # You might want to log this to a file or monitoring system in production
 
             # Save reservations
             for rezervace in created_reservations:
                 rezervace.save()
 
-            # Return the first reservation's ID so the frontend can redirect to detail
+            # Return the first reservation's ID
             first_reservation_id = created_reservations[0].id if created_reservations else None
             
             return JsonResponse({
-                'success': True, 
+                'success': True,
                 'message': 'Rezervace úspěšně vytvořeny.',
                 'reservation_id': first_reservation_id
             })
@@ -256,6 +290,7 @@ def reserve_multiple(request):
             return JsonResponse({'success': False, 'message': f'Chyba: {str(e)}'})
     
     return JsonResponse({'success': False, 'message': 'Neplatná metoda požadavku.'})
+
 
 def reserve_hour(request, court, hour):
     # Logic to save the reservation (e.g., to a database)
